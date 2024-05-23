@@ -1,34 +1,68 @@
-version: '3'
 services:
-  # rhel_personal:
-  #   image: registry.access.redhat.com/ubi8/ubi:latest
-  #   container_name: rhel_personal
-  #   ports:
-  #     - "8080:80"
-  #   command: /bin/bash -c "while true; do echo hello world; sleep 10; done"
-  #   networks:
-  #     - kafka-network
-
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:7.5.4
+    hostname: zookeeper
+    ports:
+      - 2181:2181
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-    networks:
-      - kafka-network
+      ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    image: confluentinc/cp-kafka:7.5.4
+    hostname: kafka
     ports:
       - "9092:9092"
-    networks:
-      - kafka-network
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - ./plugins:/usr/share/kafka/plugins
 
-networks:
-  kafka-network:
-    driver: bridge
+  minio:
+    image: minio/minio:RELEASE.2024-05-10T01-41-38Z
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./minio-data:/data 
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: server /data --console-address ":9001"
+
+  connect:
+    image: confluentinc/cp-kafka-connect:7.5.4
+    hostname: connect
+    user: root
+    depends_on:
+      - kafka
+      - minio
+    ports:
+      - "8083:8083"
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: "kafka:9092"
+      CONNECT_REST_ADVERTISED_HOST_NAME: connect
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/kafka/plugins/kafka-connect-s3"
+      CONNECT_GROUP_ID: "quickstart"
+      CONNECT_CONFIG_STORAGE_TOPIC: "quickstart-config"
+      CONNECT_OFFSET_STORAGE_TOPIC: "quickstart-offsets"
+      CONNECT_STATUS_STORAGE_TOPIC: "quickstart-status"
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNALVALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_CONFLUENT_LICENSE: "ABC123XYZ737BVT"
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CLASSPATH: "/usr/share/kafka/plugins/kafka-connect-s3"
+    volumes:
+      - ./plugins:/usr/share/kafka/plugins
+
+volumes:
+  minio-data:
