@@ -11,9 +11,10 @@ curl -X POST -H "Content-Type: application/json" --data @s3-sink.json http://loc
 curl -X DELETE http://localhost:8083/connectors/s3-sink-connector
 
 kafka-topics --list --bootstrap-server kafka:9092
-kafka-topics --create --topic testtopic --bootstrap-server kafka:9092
-kafka-topics --delete --topic testtopic --bootstrap-server kafka:9092
+kafka-topics --create --topic topic1 --bootstrap-server kafka:9092
+kafka-topics --delete --topic topic1 --bootstrap-server kafka:9092
 
-kafka-console-producer --broker-list kafka:9092 --topic testtopic
-kafka-console-consumer --broker-list kafka:9092 --topic testtopic 
+kafka-console-producer --bootstrap-server kafka:9092 --topic topic1
+kafka-console-consumer --bootstrap-server kafka:9092 --topic topic1 
+{"Account Type": "Visa", "Account Number": "1.23457E+14", "Transaction Date": "5/16/2024", "Cheque Number": "", "Description 1": "COMPANY64", "Description 2": "", "CAD$": "-1.73", "USD$": ""}
 -->

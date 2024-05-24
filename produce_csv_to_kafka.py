@@ -3,7 +3,7 @@ from kafka import KafkaProducer
 import json
 
 # Kafka configuration
-KAFKA_TOPIC = 'test-topic'
+KAFKA_TOPIC = 'topic1'
 KAFKA_BROKER = 'localhost:9092'
 
 # Initialize Kafka producer
@@ -16,11 +16,12 @@ producer = KafkaProducer(
 csv_file_path = '/mnt/c/Users/tomas/Downloads/csv54304.csv'
 
 # Read CSV file and send messages to Kafka
-with open(csv_file_path, mode='r') as file:
-    reader = csv.DictReader(file)
+with open(csv_file_path, mode='r', newline='') as file:
+    reader = csv.DictReader(file, quotechar=' ')
     for row in reader:
-        producer.send(KAFKA_TOPIC, row)
-        print(f'Sent: {row}')
+        row_json = json.dumps(row)
+        producer.send(KAFKA_TOPIC, row_json)
+        print(row_json)
 
 # Close the producer
 producer.flush()
