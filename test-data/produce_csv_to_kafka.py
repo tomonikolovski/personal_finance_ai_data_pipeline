@@ -4,7 +4,7 @@ import json
 
 # Kafka configuration
 KAFKA_TOPIC = 'topic1'
-KAFKA_BROKER = 'localhost:9092'
+KAFKA_BROKER = 'kafka:9092'
 
 # Initialize Kafka producer
 producer = KafkaProducer(
@@ -13,7 +13,7 @@ producer = KafkaProducer(
 )
 
 # Path to the CSV file
-csv_file_path = '/mnt/c/Users/tomas/Downloads/csv54304.csv'
+csv_file_path = './csv54304.csv'
 
 # Read CSV file and send messages to Kafka
 with open(csv_file_path, mode='r', newline='') as file:

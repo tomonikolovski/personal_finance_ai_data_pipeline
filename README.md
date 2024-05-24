@@ -11,8 +11,9 @@ curl -X POST -H "Content-Type: application/json" --data @s3-sink.json http://loc
 curl -X DELETE http://localhost:8083/connectors/s3-sink-connector
 
 kafka-topics --list --bootstrap-server kafka:9092
-kafka-topics --create --topic topic1 --bootstrap-server kafka:9092
 kafka-topics --delete --topic topic1 --bootstrap-server kafka:9092
+kafka-topics --create --topic topic1 --bootstrap-server kafka:9092
+kafka-topics --list --bootstrap-server kafka:9092
 
 kafka-console-producer --bootstrap-server kafka:9092 --topic topic1
 kafka-console-consumer --bootstrap-server kafka:9092 --topic topic1 

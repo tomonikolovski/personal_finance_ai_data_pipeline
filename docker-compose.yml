@@ -64,5 +64,20 @@ services:
     volumes:
       - ./plugins:/usr/share/kafka/plugins
 
+  rhel_container:
+    image: python:3.8
+    container_name: rhel_container
+    #command: bash -c "apt-get update && apt-get install -y package1 package2 && python your_script.py"
+    command: >
+      sh -c "
+      pip install --upgrade pip &&
+      pip install kafka-python &&
+      tail -f /dev/null
+      "
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./test-data:/test-data
+
 volumes:
   minio-data:
