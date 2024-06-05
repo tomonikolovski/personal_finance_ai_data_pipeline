@@ -6,7 +6,7 @@ spark-client/*
 minio-data/*
 minio-data/**/.[!.]*
 
-!spark-client/
-!minio-data/
+!spark-client/placeholder
+!minio-data/placeholder
 
 

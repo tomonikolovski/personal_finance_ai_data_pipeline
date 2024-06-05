@@ -1,0 +1,46 @@
+root@5ef8991ff11c:/scripts# python minio_transactions_parse_and_analyze.py --access minio --secret minio123 --endpoint "http://172.19.0.4:9000" --s3_path "s3a://bucket1/topic1/partition=0/*.json"
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/opt/spark/spark-3.5.1-bin-hadoop3/jars/slf4j-reload4j-1.7.36.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/opt/spark/spark-3.5.1-bin-hadoop3/jars/logback-classic-1.2.10.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.slf4j.impl.Reload4jLoggerFactory]
+log4j:WARN No appenders could be found for logger (org.apache.spark.util.ShutdownHookManager).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+2024-06-05 16:47:04,909 - S3SparkLogger - INFO - Spark session created successfully.
++--------------+------------+-------+-------------+-------------+-------------+----------------+----+
+|Account Number|Account Type|   CAD$|Cheque Number|Description 1|Description 2|Transaction Date|USD$|
++--------------+------------+-------+-------------+-------------+-------------+----------------+----+
+|   1.23457E+14|        Visa|-124.81|             |    COMPANY17|             |       4/25/2024|    |
+|   1.23457E+14|        Visa|-111.87|             |     COMPANY8|             |       4/20/2024|    |
+|   1.23457E+14|        Visa| -20.34|             |    COMPANY10|             |       4/21/2024|    |
+|   1.23457E+14|        Visa| -34.72|             |    COMPANY11|             |       4/21/2024|    |
+|   1.23457E+14|        Visa| -20.28|             |    COMPANY13|             |       4/22/2024|    |
+|   1.23457E+14|        Visa| -20.28|             |    COMPANY15|             |       4/24/2024|    |
+|   1.23457E+14|        Visa| -20.28|             |    COMPANY18|             |       4/25/2024|    |
+|   1.23457E+14|        Visa| -84.75|             |    COMPANY20|             |       4/27/2024|    |
+|   1.23457E+14|        Visa| -58.08|             |    COMPANY21|             |       4/28/2024|    |
+|   1.23457E+14|        Visa| 111.87|             |    COMPANY22|             |       4/28/2024|    |
+|   1.23457E+14|        Visa| -51.15|             |    COMPANY23|             |       4/28/2024|    |
+|   1.23457E+14|        Visa| -12.86|             |    COMPANY24|             |       4/28/2024|    |
+|   1.23457E+14|        Visa| -10.14|             |    COMPANY26|             |       4/29/2024|    |
+|   1.23457E+14|        Visa| -10.14|             |    COMPANY27|             |       4/29/2024|    |
+|   1.23457E+14|        Visa| -10.14|             |    COMPANY49|             |       5/10/2024|    |
+|   1.23457E+14|        Visa| -10.14|             |    COMPANY50|             |       5/10/2024|    |
+|   1.23457E+14|        Visa| -29.92|             |    COMPANY52|             |       5/12/2024|    |
+|   1.23457E+14|        Visa| -39.93|             |    COMPANY53|             |       5/12/2024|    |
+|   1.23457E+14|        Visa| -18.08|             |    COMPANY54|             |       5/12/2024|    |
+|   1.23457E+14|        Visa| -16.76|             |    COMPANY57|             |       5/13/2024|    |
++--------------+------------+-------+-------------+-------------+-------------+----------------+----+
+only showing top 20 rows
+
+2024-06-05 16:47:18,111 - S3SparkLogger - INFO - Successfully read JSON from S3 path s3a://bucket1/topic1/partition=0/*.json.
++--------------+------------+------+-------------+-------------+-------------+----------------+----+
+|Account Number|Account Type|  CAD$|Cheque Number|Description 1|Description 2|Transaction Date|USD$|
++--------------+------------+------+-------------+-------------+-------------+----------------+----+
+|   1.23457E+14|        Visa|111.87|             |    COMPANY22|             |       4/28/2024|    |
+|   1.23457E+14|        Visa|  9400|             |    COMPANY41|             |        5/5/2024|    |
++--------------+------------+------+-------------+-------------+-------------+----------------+----+
+
+2024-06-05 16:47:19,469 - S3SparkLogger - INFO - Successfully filtered DataFrame.
+2024-06-05 16:47:19,657 - S3SparkLogger - INFO - Spark session stopped.
