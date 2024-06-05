@@ -83,10 +83,10 @@ services:
       - ./scripts:/scripts
       - ./spark-client:/opt/spark
 
-  spark:
-    image: bitnami/spark:3
-    container_name: spark
-    hostname: spark
+  spark-master:
+    image: bitnami/spark:3.5.1
+    container_name: spark-master
+    hostname: spark-master
     environment:
       SPARK_MODE: master
     ports:
@@ -94,5 +94,16 @@ services:
       - "7077:7077"      
     command: [ "/opt/bitnami/scripts/spark/entrypoint.sh", "/opt/bitnami/scripts/spark/run.sh" ]
 
+  spark-worker:
+    image: bitnami/spark:3.5.1
+    container_name: spark-worker
+    hostname: spark-worker
+    ports:
+      - "8081:8081"
+    environment:
+      SPARK_MODE: worker
+      SPARK_MASTER_URL: spark://spark-master:7077     
+    command: [ "/opt/bitnami/scripts/spark/entrypoint.sh", "/opt/bitnami/scripts/spark/run.sh" ]
+    
 volumes:
   minio-data:

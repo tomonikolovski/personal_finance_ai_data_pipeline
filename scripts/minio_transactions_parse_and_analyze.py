@@ -26,6 +26,7 @@ def main():
     try:
         spark = SparkSession.builder \
             .appName("ListFilesOnMinIO") \
+            .config("spark.master", "spark://host.docker.internal:7077") \
             .config("spark.hadoop.fs.s3a.access.key", args.access) \
             .config("spark.hadoop.fs.s3a.secret.key", args.secret) \
             .config("spark.hadoop.fs.s3a.endpoint", args.endpoint) \
