@@ -8,7 +8,11 @@
     - Pre-compiled Maven already present under apache-maven-3.9.7
     - pom.xml with all neccessary repos set up already 
     - ```cd apache-maven-3.9.7/bin``` and run ```./mvn dependency:copy-dependencies -DoutputDirectory=../downloaded_files/```
-    - Copy the files - ```cp apache-maven-3.9.7/downloaded_files/* spark-client/spark-3.5.1-bin-hadoop3/jars/```
+    - Copy the neccessary files
+```
+cp ../apache-maven-3.9.7/downloaded_files/hadoop-aws-3.3.4.jar spark-3.5.1-bin-hadoop3/jars/
+cp ../apache-maven-3.9.7/downloaded_files/aws-java-sdk-bundle-1.12.262.jar spark-3.5.1-bin-hadoop3/jars/
+```
 5. Start the containers with docker compose up -d
 6. Create a MinIO bucket by navigating to http://localhost:9001/ or by using the CLI. Call it "bucket1" or anything else, but then make sure to update the s3-sink.json
 ```
