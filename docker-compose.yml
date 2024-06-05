@@ -68,7 +68,7 @@ services:
     image: python:3.8
     container_name: rhel_container
     environment:
-      JAVA_HOME: /opt/spark/jdk-22
+      JAVA_HOME: /opt/spark/jdk-22.0.1
       SPARK_HOME: /opt/spark/spark-3.5.1-bin-hadoop3
       PATH: /opt/spark/spark-3.5.1-bin-hadoop3/bin:$PATH
     command: >
