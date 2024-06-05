@@ -19,9 +19,8 @@ csv_file_path = './csv54304.csv'
 with open(csv_file_path, mode='r', newline='') as file:
     reader = csv.DictReader(file, quotechar=' ')
     for row in reader:
-        row_json = json.dumps(row)
-        producer.send(KAFKA_TOPIC, row_json)
-        print(row_json)
+        producer.send(KAFKA_TOPIC, row)
+        print(row)
 
 # Close the producer
 producer.flush()

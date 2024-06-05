@@ -67,17 +67,32 @@ services:
   rhel_container:
     image: python:3.8
     container_name: rhel_container
-    #command: bash -c "apt-get update && apt-get install -y package1 package2 && python your_script.py"
+    environment:
+      JAVA_HOME: /opt/spark/jdk-22
+      SPARK_HOME: /opt/spark/spark-3.5.1-bin-hadoop3
+      PATH: /opt/spark/spark-3.5.1-bin-hadoop3/bin:$PATH
     command: >
       sh -c "
       pip install --upgrade pip &&
-      pip install kafka-python &&
+      pip install kafka-python boto3 pyspark &&
       tail -f /dev/null
       "
     stdin_open: true
     tty: true
     volumes:
       - ./test-data:/test-data
+      - ./spark-client:/opt/spark
+
+  spark:
+    image: bitnami/spark:3
+    container_name: spark
+    hostname: spark
+    environment:
+      SPARK_MODE: master
+    ports:
+      - "8080:8080"
+      - "7077:7077"      
+    command: [ "/opt/bitnami/scripts/spark/entrypoint.sh", "/opt/bitnami/scripts/spark/run.sh" ]
 
 volumes:
   minio-data:

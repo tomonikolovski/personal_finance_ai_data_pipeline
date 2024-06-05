@@ -16,6 +16,7 @@
         "s3.credentials.provider.chain.config.sources": "com.amazonaws.auth.EnvironmentVariableCredentailsProvider",
         "key.converter": "org.apache.kafka.connect.json.JsonConverter",
         "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter.schemas.enable": "false",
         "value.converter.schemas.enable": "false",
         "flush.size": "1",
 	"behavior.on.null.values": "IGNORE",
