@@ -52,8 +52,8 @@ services:
       CONNECT_CONFIG_STORAGE_TOPIC: "quickstart-config"
       CONNECT_OFFSET_STORAGE_TOPIC: "quickstart-offsets"
       CONNECT_STATUS_STORAGE_TOPIC: "quickstart-status"
-      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.storage.StringConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.storage.StringConverter"
       CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNALVALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_CONFLUENT_LICENSE: "ABC123XYZ737BVT"
@@ -63,6 +63,36 @@ services:
       CLASSPATH: "/usr/share/kafka/plugins/kafka-connect-s3"
     volumes:
       - ./plugins:/usr/share/kafka/plugins
+
+  rhel_container:
+    image: python:3.8
+    container_name: rhel_container
+    environment:
+      JAVA_HOME: /opt/spark/jdk-22
+      SPARK_HOME: /opt/spark/spark-3.5.1-bin-hadoop3
+      PATH: /opt/spark/spark-3.5.1-bin-hadoop3/bin:$PATH
+    command: >
+      sh -c "
+      pip install --upgrade pip &&
+      pip install kafka-python boto3 pyspark &&
+      tail -f /dev/null
+      "
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./test-data:/test-data
+      - ./spark-client:/opt/spark
+
+  spark:
+    image: bitnami/spark:3
+    container_name: spark
+    hostname: spark
+    environment:
+      SPARK_MODE: master
+    ports:
+      - "8080:8080"
+      - "7077:7077"      
+    command: [ "/opt/bitnami/scripts/spark/entrypoint.sh", "/opt/bitnami/scripts/spark/run.sh" ]
 
 volumes:
   minio-data:
