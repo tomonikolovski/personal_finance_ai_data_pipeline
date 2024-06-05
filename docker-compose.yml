@@ -80,7 +80,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./test-data:/test-data
+      - ./scripts:/scripts
       - ./spark-client:/opt/spark
 
   spark:
