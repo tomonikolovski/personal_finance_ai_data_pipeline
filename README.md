@@ -1,5 +1,15 @@
 # Personal Data Pipeline with Kafka, MinIO and Spark3
 
+The purpose of this project is develop a data pipeline where you can stream financial transactions in a CSV format to Kafka, save them as json files on an object storage (MinIO in this case) and finally utilize Spark 3 to perform analysis of that data.
+
+## Components explanation
+Kafka - Streaming service
+Zookeeper - Needed to run Kafka. Keeps track of which brokers are part of the Kafka cluster. The alternative is to use KRAFT.
+Kafka Connect - The component that facilitates the data save from the Kafka topic to the object storage
+MinIO - Object storage to save data.
+Spark Master and Worker - A Spark 3 cluster to run the jobs
+RHEL container - Preconfigured Linux box from where you can run the Python/PySpark scripts.
+
 ## Project set up and usage example
 1. Clone the repo
 2. Download and untar java into the spark-client directory spark-client/jdk-22.0.1 - https://download.oracle.com/java/22/latest/jdk-22_linucdx-x64_bin.tar.gz
@@ -8,7 +18,7 @@
     - Pre-compiled Maven already present under apache-maven-3.9.7
     - pom.xml with all neccessary repos set up already 
     - ```cd apache-maven-3.9.7/bin``` and run ```./mvn dependency:copy-dependencies -DoutputDirectory=../downloaded_files/```
-    - Copy the neccessary files
+    - Copy the files 
 ```
 cp ../apache-maven-3.9.7/downloaded_files/hadoop-aws-3.3.4.jar spark-3.5.1-bin-hadoop3/jars/
 cp ../apache-maven-3.9.7/downloaded_files/aws-java-sdk-bundle-1.12.262.jar spark-3.5.1-bin-hadoop3/jars/
