@@ -31,8 +31,16 @@ curl -X POST -H "Content-Type: application/json" --data @s3-sink.json http://loc
 10. If you need to delete later on - curl -X DELETE http://localhost:8083/connectors/s3-sink-connector
 
 11. Run a script to produce data to topic1. From the RHEL container navigate to /scripts and run
+
 python stream_csv_to_kafka.py --csv_file_path ./csv54304.csv --kafka_topic topic1 - This will publish the contents of the csv file to topic1
 
+Example output log - ./scripts/minio_transactions_parse_and_analyze.log
+
 12. Run a PySpark script to parse all saved json transactions, save them in a DataFrame and run a simple filter over it. For some reason minio:9000 is not resolving properly and we need to use the container IP instead.
+    
 python minio_transactions_parse_and_analyze.py --access minio --secret minio123 --endpoint "http://172.19.0.4:9000" --s3_path "s3a://bucket1/topic1/partition=0/*.json"
 
+Example output log - ./scripts/stream_csv_to_kafka_example_output.log
+
+![1](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/8ce68a22-b9f7-421a-b012-6378aee1e145)
+![2](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/224be657-103f-41f4-a17c-1ea026ecb821)
