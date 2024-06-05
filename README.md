@@ -6,41 +6,53 @@
 4. Download additional Jar files to be able to interract with MinIO buckets from PySpark
     - Pre-compiled Maven already present under apache-maven-3.9.7
     - pom.xml with all neccessary repos set up already 
-    - cd apache-maven-3.9.7/bin and run ./mvn dependency:copy-dependencies -DoutputDirectory=../downloaded_files/
-    - copy the files - cp apache-maven-3.9.7/downloaded_files/* spark-client/spark-3.5.1-bin-hadoop3/jars/
+    - ```cd apache-maven-3.9.7/bin``` and run ```./mvn dependency:copy-dependencies -DoutputDirectory=../downloaded_files/```
+    - Copy the files - ```cp apache-maven-3.9.7/downloaded_files/* spark-client/spark-3.5.1-bin-hadoop3/jars/```
 5. Start the containers with docker compose up -d
 6. Create a MinIO bucket by navigating to http://localhost:9001/ or by using the CLI. Call it "bucket1" or anything else, but then make sure to update the s3-sink.json
+```
+Example CLI commands
+
 mc config host add <ALIAS> <COS-ENDPOINT> <ACCESS-KEY> <SECRET-KEY>
 mc config host add minio http://minio:9000/ minio minio123
 mc ls minio
 mc mb minio/bucket1
-
+```
 7. Create Kafka topic. Name it "topic1" or anything else, but then make sure to update the s3-sink.json file. Delete command attached just in a case.
+```
 kafka-topics --list --bootstrap-server kafka:9092
 kafka-topics --delete --topic topic1 --bootstrap-server kafka:9092
 kafka-topics --create --topic topic1 --bootstrap-server kafka:9092
 kafka-topics --list --bootstrap-server kafka:9092
+```
 
 8. Kafka commands to consume and produce via the CLI
+```
 kafka-console-producer --bootstrap-server kafka:9092 --topic topic1
 kafka-console-consumer --bootstrap-server kafka:9092 --topic topic1 
+```
 
 9. Publish the Kafka Connect sink configuration for the MinIO bucket. This enables Kafka to write the data to the MinIO bucket
+```
 curl -X POST -H "Content-Type: application/json" --data @s3-sink.json http://localhost:8083/connectors
+```
 
-10. If you need to delete later on - curl -X DELETE http://localhost:8083/connectors/s3-sink-connector
+10. If you need to delete later on
+```
+curl -X DELETE http://localhost:8083/connectors/s3-sink-connector
+```
 
 11. Run a script to produce data to topic1. From the RHEL container navigate to /scripts and run
-
+```
 python stream_csv_to_kafka.py --csv_file_path ./csv54304.csv --kafka_topic topic1 - This will publish the contents of the csv file to topic1
-
-Example output log - ./scripts/minio_transactions_parse_and_analyze.log
+```
+Example output log - ```./scripts/minio_transactions_parse_and_analyze.log```
 
 12. Run a PySpark script to parse all saved json transactions, save them in a DataFrame and run a simple filter over it. For some reason minio:9000 is not resolving properly and we need to use the container IP instead.
-    
+``` 
 python minio_transactions_parse_and_analyze.py --access minio --secret minio123 --endpoint "http://172.19.0.4:9000" --s3_path "s3a://bucket1/topic1/partition=0/*.json"
-
-Example output log - ./scripts/stream_csv_to_kafka_example_output.log
+```
+Example output log - ```./scripts/stream_csv_to_kafka_example_output.log```
 
 ![1](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/8ce68a22-b9f7-421a-b012-6378aee1e145)
 ![2](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/224be657-103f-41f4-a17c-1ea026ecb821)
