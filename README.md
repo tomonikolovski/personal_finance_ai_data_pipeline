@@ -1,8 +1,8 @@
-# personal_data_pipeline_kafka_spark_minio
+# Personal Data Pipeline with Kafka, MinIO and Spark3
 
 # Usefull commands
-<!-- 
-# TO CREATE MINIO BUCKET
+
+# Create MinIO Bucket
 mc config host add <ALIAS> <COS-ENDPOINT> <ACCESS-KEY> <SECRET-KEY>
 mc config host add minio http://minio:9000/ minio minio123
 mc ls minio
@@ -24,6 +24,14 @@ kafka-console-consumer --bootstrap-server kafka:9092 --topic topic1
 # EXAMPLE TRANSACTION
 {"Account Type": "Visa", "Account Number": "1.23457E+14", "Transaction Date": "5/16/2024", "Cheque Number": "", "Description 1": "COMPANY64", "Description 2": "", "CAD$": "-1.73", "USD$": ""}
 
+# DOWNLOAD JAVA
+https://download.oracle.com/java/22/latest/jdk-22_linux-x64_bin.tar.gz
+untar and place it into spark-client directory
+
+# DOWNLOAD SPARK CLIENT
+https://archive.apache.org/dist/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
+untar and place it into spark-client directory
+
 # DOWNLOAD NECESSARY JARS TO SPARK CLIENT JAR DIRECTORY
 cd apache-maven-3.9.7/bin
 ./mvn dependency:copy-dependencies -DoutputDirectory=../downloaded_files
@@ -31,5 +39,5 @@ cd ../../
 cp apache-maven-3.9.7/downloaded_files/* spark-client/spark-3.5.1-bin-hadoop3/jars/
 mv spark-client/spark-3.5.1-bin-hadoop3/jars/jackson-core-2.10.2.jar spark-client/spark-3.5.1-bin-hadoop3/jars/jackson-core-2.10.2.jar.old
 
-
--->
+# RUN THE PYSPARK SCRIPT
+python read_from_minio.py --access minio --secret minio123 --endpoint "http://172.19.0.4:9000" --s3_path "s3a://bucket1/topic1/partition=0/*.json"
