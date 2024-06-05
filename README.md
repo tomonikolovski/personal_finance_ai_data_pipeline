@@ -224,3 +224,7 @@ only showing top 20 rows
 
 </p>
 </details>
+
+### Spark Master UI
+![3](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dd227b3d-5d68-4948-9726-baa21dff2d7d)
+
