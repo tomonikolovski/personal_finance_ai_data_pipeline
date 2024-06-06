@@ -73,7 +73,7 @@ Example output log - ```./scripts/stream_csv_to_kafka_example_output.log```
 
 ### Docker containers
 
-![1](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/8ce68a22-b9f7-421a-b012-6378aee1e145)
+![1](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dbd7007f-3ed0-4b6e-ac65-afa7d575c346)
 
 ### Streaming log example
 <details open><summary>Streaming data</summary>
