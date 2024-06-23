@@ -66,7 +66,7 @@ Example output log - ```./scripts/minio_transactions_parse_and_analyze.log```
 
 12. Run a PySpark script to parse all saved json transactions, save them in a DataFrame and run a simple filter over it. For some reason minio:9000 is not resolving properly and we need to use the container IP instead.
 ``` 
-python minio_transactions_parse_and_analyze.py --access minio --secret minio123 --endpoint "http://172.19.0.4:9000" --s3_path "s3a://bucket1/topic1/partition=0/*.json"
+python minio_transactions_parse_and_analyze.py --access minio --secret minio123 --s3_path "s3a://bucket1/topic1/partition=0/*.json"
 ```
 Example output log - ```./scripts/stream_csv_to_kafka_example_output.log```
 
