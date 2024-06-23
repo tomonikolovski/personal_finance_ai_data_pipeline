@@ -64,7 +64,7 @@ python stream_csv_to_kafka.py --csv_file_path ./csv54304.csv --kafka_topic topic
 ```
 Example output log - ```./scripts/minio_transactions_parse_and_analyze.log```
 
-12. Run a PySpark script to parse all saved json transactions, save them in a DataFrame and run a simple filter over it. For some reason minio:9000 is not resolving properly and we need to use the container IP instead.
+12. Run a PySpark script to parse all saved json transactions, save them in a DataFrame and run a simple filter over it. 
 ``` 
 python minio_transactions_parse_and_analyze.py --access minio --secret minio123 --s3_path "s3a://bucket1/topic1/partition=0/*.json"
 ```
