@@ -35,6 +35,7 @@ mc mb minio/bucket1
 ```
 7. Create Kafka topic. Name it "topic1" or anything else, but then make sure to update the s3-sink.json file. Delete command attached just in a case.
 ```
+# These commands could be run from any of the kafka containers
 kafka-topics --list --bootstrap-server kafka:9092
 kafka-topics --delete --topic topic1 --bootstrap-server kafka:9092
 kafka-topics --create --topic topic1 --bootstrap-server kafka:9092
