@@ -3,6 +3,7 @@ import logging
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 import sys
+import socket 
 
 def setup_logger():
     # Configure the logger
@@ -24,12 +25,13 @@ def setup_logger():
 
 def main():
     try:
+        minio_ip = socket.gethostbyname("minio")
         spark = SparkSession.builder \
             .appName("ListFilesOnMinIO") \
             .config("spark.master", "spark://host.docker.internal:7077") \
             .config("spark.hadoop.fs.s3a.access.key", args.access) \
             .config("spark.hadoop.fs.s3a.secret.key", args.secret) \
-            .config("spark.hadoop.fs.s3a.endpoint", args.endpoint) \
+            .config("spark.hadoop.fs.s3a.endpoint", 'http://{}:9000'.format(minio_ip)) \
             .getOrCreate()
         logger.info("Spark session created successfully.")
     except Exception as e:
@@ -59,7 +61,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process S3 connection details and S3 path.')
     parser.add_argument('--access', required=True, help='S3 Access Key')
     parser.add_argument('--secret', required=True, help='S3 Secret Key')
-    parser.add_argument('--endpoint', required=True, help='S3 Endpoint URL')
     parser.add_argument('--s3_path', required=True, help='S3 Path for JSON files')
 
     args = parser.parse_args()
