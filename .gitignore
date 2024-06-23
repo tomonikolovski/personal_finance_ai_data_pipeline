@@ -5,6 +5,7 @@
 spark-client/*
 minio-data/*
 minio-data/**/.[!.]*
+apache-maven-3.9.7/downloaded_files
 
 !spark-client/placeholder
 !minio-data/placeholder
