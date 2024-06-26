@@ -75,6 +75,8 @@ services:
   rhel_container:
     image: python:3.8
     container_name: rhel_container
+    # For Apple silicon M1, M2, M3 use linux/x86_64 platform for the rhel container as it needs to be compatible with the contents of the /opt/spark directory 
+    # platform: linux/x86_64
     networks:
       - docker-net
     environment:
@@ -97,6 +99,7 @@ services:
     image: bitnami/spark:3.5.1
     container_name: spark-master
     hostname: spark-master
+    platform: linux/arm64/v8
     environment:
       SPARK_MODE: master
     networks:
@@ -110,6 +113,7 @@ services:
     image: bitnami/spark:3.5.1
     container_name: spark-worker
     hostname: spark-worker
+    platform: linux/arm64/v8
     networks:
       - docker-net
     ports:
