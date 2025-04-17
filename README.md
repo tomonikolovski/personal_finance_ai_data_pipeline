@@ -12,7 +12,7 @@ RHEL container - Preconfigured Linux box from where you can run the Python/PySpa
 
 ## Project set up and usage example
 1. Clone the repo
-2. Download and untar java into the spark-client directory spark-client/jdk-22.0.1 - [https://download.oracle.com/java/22/latest/jdk-22_linucdx-x64_bin.tar.gz](https://download.oracle.com/java/22/latest/jdk-22_linux-x64_bin.tar.gz)
+2. Download and untar java into the spark-client directory spark-client/jdk-22.0.1 - [https://download.oracle.com/java/22/latest/jdk-22_linux-x64_bin.tar.gz](https://download.oracle.com/java/22/latest/jdk-22_linux-x64_bin.tar.gz)
 3. Download and untar spark3 into the spark-client directory spark-client/spark-3.5.1-bin-hadoop3 - https://archive.apache.org/dist/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
 4. Download additional Jar files to be able to interract with MinIO buckets from PySpark
     - Pre-compiled Maven already present under apache-maven-3.9.7
