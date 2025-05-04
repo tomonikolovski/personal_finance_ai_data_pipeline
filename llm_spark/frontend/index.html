@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PySpark Generator</title>
+</head>
+<body>
+  <h1>Describe your task</h1>
+  <textarea id="description" rows="5" cols="60"></textarea><br>
+  <button onclick="generate()">Submit</button>
+  <pre id="output"></pre>
+
+  <script>
+    async function generate() {
+      const description = document.getElementById("description").value;
+      const res = await fetch("http://localhost:8000/generate-and-run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description })
+      });
+      const data = await res.json();
+      document.getElementById("output").textContent =
+        "Generated Code:\n" + data.generated_code +
+        "\n\nOutput:\n" + data.output +
+        "\n\nErrors:\n" + data.error;
+    }
+  </script>
+</body>
+</html>
+

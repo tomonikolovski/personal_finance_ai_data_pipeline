@@ -1,0 +1,47 @@
+services:
+  backend:
+    image: tiangolo/uvicorn-gunicorn-fastapi:python3.10
+    volumes:
+      - ./backend:/app
+      - ./llm:/app/llm
+    environment:
+      - MODULE_NAME=app
+      - VARIABLE_NAME=app
+      - MODEL_PATH=/app/llm/tinyllama.gguf
+#      - SPARK_MASTER=spark://spark:7077
+    command: >
+      /bin/bash -c "
+        apt-get update &&
+        apt-get install -y cmake build-essential &&
+        pip install --upgrade pip &&
+        pip install --no-cache-dir --verbose -r /app/requirements.txt &&
+        uvicorn app:app --host 0.0.0.0 --port 80
+      "
+    ports:
+      - "8000:80"
+#    depends_on:
+#      - spark
+
+  frontend:
+    image: nginx:alpine
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+
+ # spark:
+ #   image: bitnami/spark:latest
+ #   environment:
+ #     - SPARK_MODE=master
+ #   ports:
+ #     - "7077:7077"
+ #     - "8081:8080"
+
+  #spark-worker:
+  #  image: bitnami/spark:latest
+  #  environment:
+  #    - SPARK_MODE=worker
+  #    - SPARK_MASTER_URL=spark://spark:7077
+  #  depends_on:
+  #    - spark
+
