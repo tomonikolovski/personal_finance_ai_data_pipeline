@@ -29,23 +29,28 @@ class Prompt(BaseModel):
 
 @app.post("/generate-and-run")
 async def generate_and_run(prompt: Prompt):
-    prompt_text = f"""You are a helpful assistant that generates production-ready PySpark methods.
-    
-        Generate a transactions_analyzer(data_frame, spark) method based on the following description.
-        Assume that data_frame already contains the data. spark is the spark session.
-        Show the method code once and nothing else.
-        Task Description:
-        \"\"\"
-        { prompt.description }
-        \"\"\"
+    prompt_text = f"""
+You are a helpful assistant that generates a function definition only.
 
-        Full PySpark Script:
-        """
+Generate a complete transactions_analyzer(data_frame, spark) method using PySpark, based on the following description:
+
+\"\"\"
+{prompt.description}
+\"\"\"
+
+The data_frame has columns: Account Number, Account Type, CAD$, Description 1, Transaction Date.
+CAD$ is amount, Description 1 is the company name.
+
+Guidelines:
+- Only output the full Python function: def transactions_analyzer(data_frame, spark): ...
+- Use 'logger' for logging.
+- Always stop Spark with spark.stop() in finally block.
+"""
     # Generate code from LLM
     output = llm(
         prompt_text,
         max_tokens=2048,   # Allow bigger responses
-        stop=["Task Description:", "Full PySpark Script:"],  # Make sure it stops after code
+        stop=["Task Description:","Full PySpark Script:"],  # Make sure it stops after code
     )
     code = output["choices"][0]["text"].strip()
 
