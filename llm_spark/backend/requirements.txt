@@ -2,4 +2,6 @@ fastapi
 uvicorn
 llama-cpp-python==0.3.3
 pydantic
-
+kafka-python 
+boto3 
+pyspark
