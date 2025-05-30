@@ -12,9 +12,9 @@ This project is a personal finance AI data pipeline built to experiment with rea
 📊 Data Analysis:
 - Manually write PySpark scripts to analyze the stored data using Apache Spark 3.
 - Or interact with a local LLM (Llama.cpp) through a FastAPI-based web interface. Users can enter natural language prompts (e.g., "Show me all transactions greater than 10 dollars").
-- The LLM will convert the prompt into a valid PySpark query.
-- The backend will execute the query against the Spark cluster.
-- Return and display the results in the Web UI.
+  - The LLM will convert the prompt into a valid PySpark query.
+  - The backend will execute the query against the Spark cluster.
+  - Return and display the results in the Web UI.
 
 ## 🔧 Tech Stack and project components
 This project leverages a modular set of open-source technologies to simulate a full AI-powered data analytics pipeline. Here's a breakdown of each component:
