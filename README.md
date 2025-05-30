@@ -196,16 +196,19 @@ python minio_transactions_parse_and_analyze.py \
 
 📄 Output log: `./scripts/stream_csv_to_kafka_example_output.log`
 
-## Example workflow
+---
+## Example Workflow
 
-### Docker containers
+### Docker Containers
 
-![1](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dbd7007f-3ed0-4b6e-ac65-afa7d575c346)
+![Docker Architecture](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dbd7007f-3ed0-4b6e-ac65-afa7d575c346)
 
-### Streaming log example
-<details open><summary>Streaming data</summary>
+---
+
+### Streaming Log Example
+
+<details open><summary>Streaming Data</summary>
 <p>
-
 
 ```python
 root@5ef8991ff11c:/scripts# python stream_csv_to_kafka.py --csv_file_path ./csv54304.csv --kafka_topic topic1
@@ -291,8 +294,12 @@ root@5ef8991ff11c:/scripts#
 </p>
 </details>
 
+---
+
 ### MinIO objects after streaming
-![2](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/224be657-103f-41f4-a17c-1ea026ecb821)
+![MinIO Objects](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/224be657-103f-41f4-a17c-1ea026ecb821)
+
+---
 
 ### Using PySpark to parse MinIO objects and perform a simple filtering
 
@@ -352,6 +359,8 @@ only showing top 20 rows
 </p>
 </details>
 
+---
+
 ### Spark Master UI
-![3](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dd227b3d-5d68-4948-9726-baa21dff2d7d)
+![Spark Master UI](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dd227b3d-5d68-4948-9726-baa21dff2d7d)
 
