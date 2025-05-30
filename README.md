@@ -62,7 +62,7 @@ cd personal_finance_data_pipeline_kafka_spark_minio
 
 ---
 
-### 2. Download and install local llm
+### 2. 🤖 Download the LLM of choice CodeLlama-7B-Instruct.Q4_K_M
 ```bash
 wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_K_M.gguf -O codellama-7b-instruct.Q4_K_M.gguf
 mkdir -p llm_spark/backend/llm
@@ -71,7 +71,7 @@ cp codellama-7b-instruct.Q4_K_M.gguf llm_spark/backend/llm/
 
 ---
 
-### 2. ☕ Install Java (JDK 22)
+### 3. ☕ Install Java (JDK 22)
 
 Download and extract Java into the Spark client directory:
 
@@ -82,7 +82,7 @@ tar -xzf jdk-22_linux-x64_bin.tar.gz -C spark-client/jdk-22.0.1 --strip-componen
 ```
 
 ---
-### 3. ⚡ Install Apache Spark 3.5.1
+### 4. ⚡ Install Apache Spark 3.5.1
 
 ```bash
 wget https://archive.apache.org/dist/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
@@ -91,7 +91,7 @@ tar -xzf spark-3.5.1-bin-hadoop3.tgz -C spark-client/spark-3.5.1-bin-hadoop3 --s
 ```
 
 ---
-### 4. 📦 Install Required JARs for MinIO Integration
+### 5. 📦 Install Required JARs for MinIO Integration
 
 Download additional Jar files to be able to interract with MinIO buckets from PySpark
 - Pre-compiled Maven already present under apache-maven-3.9.7
@@ -111,14 +111,14 @@ cp ../downloaded_files/aws-java-sdk-bundle-1.12.262.jar ../../spark-client/spark
 
 ---
 
-### 5. 🐳 Start Docker Containers
+### 6. 🐳 Start Docker Containers
 
 ```bash
 docker compose up -d
 ```
 
 ---
-### 6. 🪣 Create MinIO Bucket
+### 7. 🪣 Create MinIO Bucket
 
 Access MinIO UI at [http://localhost:9001](http://localhost:9001) or use the CLI:
 
@@ -132,7 +132,7 @@ mc mb minio/bucket1
 > ⚠️ If you use a different bucket name, update the `s3-sink.json` file accordingly.
 
 ---
-### 7. 🌀 Create Kafka Topic
+### 8. 🌀 Create Kafka Topic
 
 Use the following commands in any Kafka container:
 
@@ -150,7 +150,7 @@ kafka-topics --delete --topic topic1 --bootstrap-server kafka:9092
 > ⚠️ If you use a different topic name, update the `s3-sink.json` file accordingly.
 --- 
 
-### 8. 💬 Kafka CLI Producer/Consumer
+### 9. 💬 Kafka CLI Producer/Consumer
 
 To produce messages manually:
 
@@ -165,7 +165,7 @@ kafka-console-consumer --bootstrap-server kafka:9092 --topic topic1
 ```
 
 ---
-### 9. 🔌 Register Kafka Connect Sink
+### 10. 🔌 Register Kafka Connect Sink
 
 This step configures Kafka to write messages to the MinIO bucket:
 
@@ -180,7 +180,7 @@ curl -X DELETE http://localhost:8083/connectors/s3-sink-connector
 ```
 
 ---
-### 10. 📤 Produce Data to Kafka from CSV
+### 11. 📤 Produce Data to Kafka from CSV
 
 From inside the **RHEL container**, run the following:
 
@@ -193,7 +193,7 @@ python stream_csv_to_kafka.py --csv_file_path ./csv54304.csv --kafka_topic topic
 
 ---
 
-### 11. 🔍 Analyze Data with PySpark
+### 12. 🔍 Analyze Data with PySpark
 
 Run a PySpark script to load, parse, and filter JSON data from MinIO:
 
