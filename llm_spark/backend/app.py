@@ -122,7 +122,7 @@ async def generate_and_run(prompt: Prompt):
     CAD$ is amount, Description 1 is the company name.
 
     Guidelines:
-    - Only output the full Python function without quotes \"\"\": def transactions_analyzer(data_frame, spark): 
+    - Only output the full Python function without quotes \"\"\" or indentation: def transactions_analyzer(data_frame, spark): 
     - Use 'logger' for logging.
     - Always stop Spark with spark.stop() in finally block.
     """
@@ -149,7 +149,7 @@ async def generate_and_run(prompt: Prompt):
     cmd = [
         "spark-submit",
         "--master", SPARK_MASTER,
-        "/tmp/generated_job.py --access minio --secret minio123 --s3_path "s3a://bucket1/topic1/partition=0/*.json""
+        "/tmp/generated_job.py --access minio --secret minio123 --s3_path 's3a://bucket1/topic1/partition=0/*.json'"
     ]
 
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
