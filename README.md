@@ -1,14 +1,52 @@
-# Personal Data Pipeline with Kafka, MinIO and Spark3
+# Personal AI Data Pipeline
+Personal AI Data Pipeline - Stream and store transactions. Analyze with Spark 3 and leverage a local LLM to write code based on human language input
 
-The purpose of this project is develop a data pipeline where you can stream financial transactions in a CSV format to Kafka, save them as json files on an object storage (MinIO in this case) and finally utilize Spark 3 to perform analysis of that data.
+## 🚀 Overview
 
-## Components explanation
-Kafka - Streaming service
-Zookeeper - Needed to run Kafka. Keeps track of which brokers are part of the Kafka cluster. The alternative is to use KRAFT.
-Kafka Connect - The component that facilitates the data save from the Kafka topic to the object storage
-MinIO - Object storage to save data.
-Spark Master and Worker - A Spark 3 cluster to run the jobs
-RHEL container - Preconfigured Linux box from where you can run the Python/PySpark scripts.
+This project is a personal AI data pipeline built to experiment with real-time data processing, storage, and AI-assisted analytics using modern open-source tools. It simulates a financial data workflow with both manual and AI-powered analysis capabilities.
+
+🧩 Key Components
+
+📥 Data Ingestion: Financial transactions (in CSV format) are streamed into Kafka.
+🗂️ Data Storage: The streamed data is transformed into JSON and stored in MinIO (an S3-compatible object store).
+📊 Data Analysis:
+- Manually write PySpark scripts to analyze the stored data using Apache Spark 3.
+- Or interact with a local LLM (Llama.cpp) through a FastAPI-based web interface. Users can enter natural language prompts (e.g., "Show me all transactions greater than 10 dollars").
+- The LLM will convert the prompt into a valid PySpark query.
+- The backend will execute the query against the Spark cluster.
+- Return and display the results in the Web UI.
+
+## 🔧 Tech Stack and project components
+his project leverages a modular set of open-source technologies to simulate a full AI-powered data analytics pipeline. Here's a breakdown of each component:
+
+🌀 Kafka
+Used for real-time streaming of financial transactions. Kafka handles the ingestion and buffering of data in motion.
+
+🐘 Zookeeper
+Required for managing Kafka in this setup. It maintains metadata and broker coordination. (Note: KRaft is a newer alternative that removes the Zookeeper dependency.)
+
+🔗 Kafka Connect
+Facilitates data transfer from Kafka topics to external storage. In this case, it streams Kafka messages into MinIO as JSON files.
+
+🗄️ MinIO
+An S3-compatible object storage system used to persist transaction data in a scalable, accessible format.
+
+⚡ Apache Spark 3
+Deployed as a Spark Master and one or more Workers, this cluster is responsible for distributed processing and analysis of the transaction data.
+
+🐍 RHEL Container (PySpark CLI)
+A pre-configured Red Hat Enterprise Linux container where users can manually run Python or PySpark scripts to interact with the stored data.
+
+🌐 FastAPI Frontend
+A lightweight web interface that allows users to input natural language prompts describing the analysis they want to perform.
+
+🧠 LLM Backend (Llama.cpp)
+A backend container running a local large language model via Llama.cpp. It:
+
+- Interprets natural language prompts,
+- Generates equivalent PySpark code,
+- Executes the code on the Spark cluster, and
+- Returns the results to the user.
 
 ## Project set up and usage example
 1. Clone the repo
