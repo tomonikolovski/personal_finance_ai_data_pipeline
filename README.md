@@ -1,9 +1,9 @@
-# Personal AI Data Pipeline
-Personal AI Data Pipeline - Stream and store transactions. Analyze with Spark 3 and leverage a local LLM to write code based on human language input
+# Personal Finance AI Data Pipeline
+Personal Finance AI Data Pipeline - Stream and store transactions. Analyze with Spark 3 and leverage a local LLM to write code based on human language input
 
 ## 🚀 Overview
 
-This project is a personal AI data pipeline built to experiment with real-time data processing, storage, and AI-assisted analytics using modern open-source tools. It simulates a financial data workflow with both manual and AI-powered analysis capabilities.
+This project is a personal finance AI data pipeline built to experiment with real-time data processing, storage, and AI-assisted analytics using modern open-source tools. It simulates a financial data workflow with both manual and AI-powered analysis capabilities.
 
 🧩 Key Components
 
