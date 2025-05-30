@@ -40,10 +40,10 @@ A pre-configured Red Hat Enterprise Linux container where users can manually run
 🌐 FastAPI Frontend
 A lightweight web interface that allows users to input natural language prompts describing the analysis they want to perform.
 
-🧠 LLM Backend (Llama.cpp)
+🧠 LLM Backend (Llama.cpp inference)
 A backend container running a local large language model via Llama.cpp. It:
 
-- Interprets natural language prompts,
+- Interprets natural language prompts by using CodeLlama-7B-Instruct-GGUF model,
 - Generates equivalent PySpark code,
 - Executes the code on the Spark cluster, and
 - Returns the results to the user.
@@ -61,6 +61,16 @@ cd personal_finance_data_pipeline_kafka_spark_minio
 ```
 
 ---
+
+### 2. Download and install local llm
+```bash
+wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_K_M.gguf -O codellama-7b-instruct.Q4_K_M.gguf
+mkdir -p llm_spark/backend/llm
+cp codellama-7b-instruct.Q4_K_M.gguf llm_spark/backend/llm/
+```
+
+---
+
 ### 2. ☕ Install Java (JDK 22)
 
 Download and extract Java into the Spark client directory:
