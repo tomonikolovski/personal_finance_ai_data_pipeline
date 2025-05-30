@@ -17,7 +17,7 @@ This project is a personal AI data pipeline built to experiment with real-time d
 - Return and display the results in the Web UI.
 
 ## 🔧 Tech Stack and project components
-his project leverages a modular set of open-source technologies to simulate a full AI-powered data analytics pipeline. Here's a breakdown of each component:
+This project leverages a modular set of open-source technologies to simulate a full AI-powered data analytics pipeline. Here's a breakdown of each component:
 
 🌀 Kafka
 Used for real-time streaming of financial transactions. Kafka handles the ingestion and buffering of data in motion.
@@ -48,65 +48,153 @@ A backend container running a local large language model via Llama.cpp. It:
 - Executes the code on the Spark cluster, and
 - Returns the results to the user.
 
-## Project set up and usage example
-1. Clone the repo
-2. Download and untar java into the spark-client directory spark-client/jdk-22.0.1 - [https://download.oracle.com/java/22/latest/jdk-22_linucdx-x64_bin.tar.gz](https://download.oracle.com/java/22/latest/jdk-22_linux-x64_bin.tar.gz)
-3. Download and untar spark3 into the spark-client directory spark-client/spark-3.5.1-bin-hadoop3 - https://archive.apache.org/dist/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
-4. Download additional Jar files to be able to interract with MinIO buckets from PySpark
-    - Pre-compiled Maven already present under apache-maven-3.9.7
-    - pom.xml with all neccessary repos set up already 
-    - ```cd apache-maven-3.9.7/bin``` and run ```./mvn dependency:copy-dependencies -DoutputDirectory=../downloaded_files/```
-    - Copy the files 
+## ⚙️ Project Setup & Usage Guide
+
+Follow these steps to set up and run the project locally.
+
+---
+### 1. 📥 Clone the Repository
+
+```bash
+git clone https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio.git
+cd personal_finance_data_pipeline_kafka_spark_minio
 ```
+
+---
+### 2. ☕ Install Java (JDK 22)
+
+Download and extract Java into the Spark client directory:
+
+```bash
+wget https://download.oracle.com/java/22/latest/jdk-22_linux-x64_bin.tar.gz
+mkdir -p spark-client/jdk-22.0.1
+tar -xzf jdk-22_linux-x64_bin.tar.gz -C spark-client/jdk-22.0.1 --strip-components=1
+```
+
+---
+### 3. ⚡ Install Apache Spark 3.5.1
+
+```bash
+wget https://archive.apache.org/dist/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
+mkdir -p spark-client/spark-3.5.1-bin-hadoop3
+tar -xzf spark-3.5.1-bin-hadoop3.tgz -C spark-client/spark-3.5.1-bin-hadoop3 --strip-components=1
+```
+
+---
+### 4. 📦 Install Required JARs for MinIO Integration
+
+Download additional Jar files to be able to interract with MinIO buckets from PySpark
+- Pre-compiled Maven already present under apache-maven-3.9.7
+- pom.xml with all neccessary repos set up already 
+
+```bash
+cd apache-maven-3.9.7/bin
+./mvn dependency:copy-dependencies -DoutputDirectory=../downloaded_files/
+```
+
+Copy the necessary JARs to the Spark JAR directory:
+
+```bash
 cp ../downloaded_files/hadoop-aws-3.3.4.jar ../../spark-client/spark-3.5.1-bin-hadoop3/jars/
 cp ../downloaded_files/aws-java-sdk-bundle-1.12.262.jar ../../spark-client/spark-3.5.1-bin-hadoop3/jars/
 ```
-5. Start the containers with docker compose up -d
-6. Create a MinIO bucket by navigating to http://localhost:9001/ or by using the CLI. Call it "bucket1" or anything else, but then make sure to update the s3-sink.json
-```
-Example CLI commands
 
+---
+
+### 5. 🐳 Start Docker Containers
+
+```bash
+docker compose up -d
+```
+
+---
+### 6. 🪣 Create MinIO Bucket
+
+Access MinIO UI at [http://localhost:9001](http://localhost:9001) or use the CLI:
+
+```bash
 mc config host add <ALIAS> <COS-ENDPOINT> <ACCESS-KEY> <SECRET-KEY>
 mc config host add minio http://minio:9000/ minio minio123
 mc ls minio
 mc mb minio/bucket1
 ```
-7. Create Kafka topic. Name it "topic1" or anything else, but then make sure to update the s3-sink.json file. Delete command attached just in a case.
-```
-# These commands could be run from any of the kafka containers
-kafka-topics --list --bootstrap-server kafka:9092
-kafka-topics --delete --topic topic1 --bootstrap-server kafka:9092
+
+> ⚠️ If you use a different bucket name, update the `s3-sink.json` file accordingly.
+
+---
+### 7. 🌀 Create Kafka Topic
+
+Use the following commands in any Kafka container:
+
+```bash
+# Create topic
 kafka-topics --create --topic topic1 --bootstrap-server kafka:9092
+
+# List topics
 kafka-topics --list --bootstrap-server kafka:9092
+
+# Optional: Delete topic
+kafka-topics --delete --topic topic1 --bootstrap-server kafka:9092
 ```
 
-8. Kafka commands to consume and produce via the CLI
-```
+> ⚠️ If you use a different topic name, update the `s3-sink.json` file accordingly.
+--- 
+
+### 8. 💬 Kafka CLI Producer/Consumer
+
+To produce messages manually:
+
+```bash
 kafka-console-producer --bootstrap-server kafka:9092 --topic topic1
-kafka-console-consumer --bootstrap-server kafka:9092 --topic topic1 
 ```
 
-9. Publish the Kafka Connect sink configuration for the MinIO bucket. This enables Kafka to write the data to the MinIO bucket
+To consume messages:
+
+```bash
+kafka-console-consumer --bootstrap-server kafka:9092 --topic topic1
 ```
+
+---
+### 9. 🔌 Register Kafka Connect Sink
+
+This step configures Kafka to write messages to the MinIO bucket:
+
+```bash
 curl -X POST -H "Content-Type: application/json" --data @s3-sink.json http://localhost:8083/connectors
 ```
 
-10. If you need to delete later on
-```
+To delete the connector later:
+
+```bash
 curl -X DELETE http://localhost:8083/connectors/s3-sink-connector
 ```
 
-11. Run a script to produce data to topic1. From the RHEL container navigate to /scripts and run
-```
-python stream_csv_to_kafka.py --csv_file_path ./csv54304.csv --kafka_topic topic1 - This will publish the contents of the csv file to topic1
-```
-Example output log - ```./scripts/minio_transactions_parse_and_analyze.log```
+---
+### 10. 📤 Produce Data to Kafka from CSV
 
-12. Run a PySpark script to parse all saved json transactions, save them in a DataFrame and run a simple filter over it. 
-``` 
-python minio_transactions_parse_and_analyze.py --access minio --secret minio123 --s3_path "s3a://bucket1/topic1/partition=0/*.json"
+From inside the **RHEL container**, run the following:
+
+```bash
+cd /scripts
+python stream_csv_to_kafka.py --csv_file_path ./csv54304.csv --kafka_topic topic1
 ```
-Example output log - ```./scripts/stream_csv_to_kafka_example_output.log```
+
+📄 Output log: `./scripts/minio_transactions_parse_and_analyze.log`
+
+---
+
+### 11. 🔍 Analyze Data with PySpark
+
+Run a PySpark script to load, parse, and filter JSON data from MinIO:
+
+```bash
+python minio_transactions_parse_and_analyze.py \
+  --access minio \
+  --secret minio123 \
+  --s3_path "s3a://bucket1/topic1/partition=0/*.json"
+```
+
+📄 Output log: `./scripts/stream_csv_to_kafka_example_output.log`
 
 ## Example workflow
 
