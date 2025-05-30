@@ -201,7 +201,7 @@ python minio_transactions_parse_and_analyze.py \
 
 ### Docker Containers
 
-![Docker Architecture](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dbd7007f-3ed0-4b6e-ac65-afa7d575c346)
+![Docker Architecture](https://github.com/user-attachments/assets/eb48b3a9-88b5-4360-8854-2244913a19e0)>
 
 ---
 
@@ -363,4 +363,8 @@ only showing top 20 rows
 
 ### Spark Master UI
 ![Spark Master UI](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dd227b3d-5d68-4948-9726-baa21dff2d7d)
+
+### Frontend UI
+<img width="1391" alt="image" src="https://github.com/user-attachments/assets/f8b714ab-7f53-4a9d-a0a8-3d72a8b750e9" />
+
 
