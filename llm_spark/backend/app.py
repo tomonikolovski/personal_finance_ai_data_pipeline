@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import textwrap
 import subprocess
 from llama_cpp import Llama
 import os
@@ -61,15 +62,11 @@ def main():
 
     try:
         df = spark.read.json(args.s3_path)
-        df.show()
-        logger.info("Successfully read JSON from S3 path {{}}.".format(args.s3_path))
+        transactions_analyzer(df, spark)
     except Exception as e:
-        logger.error("Error reading JSON from S3 path {{}}: {{}}".format(args.s3_path, e))
+        logger.error(e)
         spark.stop()
         sys.exit(1)
-
-    # transactions_analyzer method here
-    transactions_analyzer(df, spark)
 
 
 if __name__ == "__main__":
@@ -122,7 +119,7 @@ async def generate_and_run(prompt: Prompt):
     CAD$ is amount, Description 1 is the company name.
 
     Guidelines:
-    - Only output the full Python function without quotes \"\"\" or indentation: def transactions_analyzer(data_frame, spark): 
+    - Only output the full Python function: def transactions_analyzer(data_frame, spark): 
     - Use 'logger' for logging.
     - Always stop Spark with spark.stop() in finally block.
     """
@@ -133,13 +130,12 @@ async def generate_and_run(prompt: Prompt):
         max_tokens=2048,   # Allow bigger responses
         stop=["Task Description:","Full PySpark Script:"],  # Make sure it stops after code
     )
-    transactions_analyzer = output["choices"][0]["text"].strip().replace("\"\"\"","")
+    transactions_analyzer = textwrap.dedent(output["choices"][0]["text"].strip().replace("\"\"\"",""))
     print(transactions_analyzer)
 
     full_script = SCRIPT_TEMPLATE.format(
         transactions_analyzer=transactions_analyzer
     )
-    print(full_script)
 
     # Save to script
     with open("/tmp/generated_job.py", "w") as f:
@@ -149,7 +145,10 @@ async def generate_and_run(prompt: Prompt):
     cmd = [
         "spark-submit",
         "--master", SPARK_MASTER,
-        "/tmp/generated_job.py --access minio --secret minio123 --s3_path 's3a://bucket1/topic1/partition=0/*.json'"
+        "/tmp/generated_job.py",
+        "--access", "minio",
+        "--secret", "minio123",
+        "--s3_path", "s3a://bucket1/topic1/partition=0/*.json"
     ]
 
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
