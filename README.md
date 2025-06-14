@@ -5,8 +5,8 @@
   * [Tech Stack and project components](#tech-stack-and-project-components)
   * [Project Setup & Usage Guide](#project-setup---usage-guide)
     + [1. Clone the Repository](#1-clone-the-repository)
-    + [2. Download the LLM of choice CodeLlama-7B-Instruct.Q4_K_M](#2-download-the-llm-of-choice-codellama-7b-instruct-q4-k-m)
-    + [3. Install Java (JDK 22)](#3-install-java--jdk-22-)
+    + [2. Download the LLM of choice CodeLlama-7B-Instruct Q4_K_M](#2-download-the-llm-of-choice-codellama-7b-instruct-q4-k-m)
+    + [3. Install Java - JDK 22](#3-install-java---jdk-22)
     + [4. Install Apache Spark 3.5.1](#4-install-apache-spark-351)
     + [5. Install Required JARs for MinIO Integration](#5-install-required-jars-for-minio-integration)
     + [6. Start Docker Containers](#6-start-docker-containers)
@@ -15,7 +15,7 @@
     + [9. Kafka CLI Producer/Consumer](#9-kafka-cli-producer-consumer)
     + [10. Register Kafka Connect Sink](#10-register-kafka-connect-sink)
     + [11. Produce Data to Kafka from CSV](#11-produce-data-to-kafka-from-csv)
-    + [12. Analyze Data with PySpark](#12-analyze-data-with-pyspark)
+    + [12. 🔍 Analyze Data with PySpark](#12----analyze-data-with-pyspark)
   * [Example Workflow](#example-workflow)
     + [Docker Containers](#docker-containers)
     + [Streaming Log Example](#streaming-log-example)
@@ -88,7 +88,7 @@ cd personal_finance_data_pipeline_kafka_spark_minio
 
 ---
 
-### 2. Download the LLM of choice CodeLlama-7B-Instruct.Q4_K_M
+### 2. Download the LLM of choice CodeLlama-7B-Instruct Q4_K_M
 ```bash
 wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_K_M.gguf -O codellama-7b-instruct.Q4_K_M.gguf
 mkdir -p llm_spark/backend/llm
@@ -97,7 +97,7 @@ cp codellama-7b-instruct.Q4_K_M.gguf llm_spark/backend/llm/
 
 ---
 
-### 3. Install Java (JDK 22)
+### 3. Install Java - JDK 22
 
 Download and extract Java into the Spark client directory:
 
