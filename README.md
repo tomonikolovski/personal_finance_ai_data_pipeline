@@ -1,6 +1,6 @@
 # Personal Finance AI Data Pipeline
 
-  * [🚀 Overview](#---overview)
+  ** [🚀 Overview](#---overview)
   * [🔧 Tech Stack and project components](#---tech-stack-and-project-components)
   * [⚙️ Project Setup & Usage Guide](#---project-setup---usage-guide)
     + [1. 📥 Clone the Repository](#1----clone-the-repository)
