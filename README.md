@@ -2,7 +2,7 @@
 
 - [Personal Finance AI Data Pipeline](#personal-finance-ai-data-pipeline)
   * [Overview](#overview)
-  * [🔧 Tech Stack and project components](#---tech-stack-and-project-components)
+  * [Tech Stack and project components](#tech-stack-and-project-components)
   * [Project Setup & Usage Guide](#project-setup---usage-guide)
     + [1. Clone the Repository](#1-clone-the-repository)
     + [2. Download the LLM of choice CodeLlama-7B-Instruct.Q4_K_M](#2-download-the-llm-of-choice-codellama-7b-instructq4-k-m)
@@ -42,7 +42,7 @@ This project is a personal finance AI data pipeline built to experiment with rea
   - The backend will execute the query against the Spark cluster.
   - Return and display the results in the Web UI.
 
-## 🔧 Tech Stack and project components
+## Tech Stack and project components
 This project leverages a modular set of open-source technologies to simulate a full AI-powered data analytics pipeline. Here's a breakdown of each component:
 
 🌀 Kafka
