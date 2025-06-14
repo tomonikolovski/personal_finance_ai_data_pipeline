@@ -5,7 +5,7 @@
   * [Tech Stack and project components](#tech-stack-and-project-components)
   * [Project Setup & Usage Guide](#project-setup---usage-guide)
     + [1. Clone the Repository](#1-clone-the-repository)
-    + [2. Download the LLM of choice CodeLlama-7B-Instruct Q4_K_M](#2-download-the-llm-of-choice-codellama-7b-instruct-q4-k-m)
+    + [2. Download the LLM of choice CodeLlama-7B-Instruct Q4_K_M](#2-download-the-llm-of-choice-codellama-7b-instruct-q4-km)
     + [3. Install Java - JDK 22](#3-install-java---jdk-22)
     + [4. Install Apache Spark 3.5.1](#4-install-apache-spark-351)
     + [5. Install Required JARs for MinIO Integration](#5-install-required-jars-for-minio-integration)
@@ -88,7 +88,7 @@ cd personal_finance_data_pipeline_kafka_spark_minio
 
 ---
 
-### 2. Download the LLM of choice CodeLlama 7B Instruct Q4_K_M
+### 2. Download the LLM of choice CodeLlama 7B Instruct Q4 KM
 ```bash
 wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_K_M.gguf -O codellama-7b-instruct.Q4_K_M.gguf
 mkdir -p llm_spark/backend/llm
