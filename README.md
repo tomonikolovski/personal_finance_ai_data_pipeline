@@ -1,32 +1,31 @@
+- [Personal Finance AI Data Pipeline](#personal-finance-ai-data-pipeline)
+  * [🚀 Overview](#---overview)
+  * [🔧 Tech Stack and project components](#---tech-stack-and-project-components)
+  * [⚙️ Project Setup & Usage Guide](#---project-setup---usage-guide)
+    + [1. 📥 Clone the Repository](#1----clone-the-repository)
+    + [2. 🤖 Download the LLM of choice CodeLlama-7B-Instruct.Q4_K_M](#2----download-the-llm-of-choice-codellama-7b-instructq4-k-m)
+    + [3. ☕ Install Java (JDK 22)](#3---install-java--jdk-22-)
+    + [4. ⚡ Install Apache Spark 3.5.1](#4---install-apache-spark-351)
+    + [5. 📦 Install Required JARs for MinIO Integration](#5----install-required-jars-for-minio-integration)
+    + [6. 🐳 Start Docker Containers](#6----start-docker-containers)
+    + [7. 🪣 Create MinIO Bucket](#7----create-minio-bucket)
+    + [8. 🌀 Create Kafka Topic](#8----create-kafka-topic)
+    + [9. 💬 Kafka CLI Producer/Consumer](#9----kafka-cli-producer-consumer)
+    + [10. 🔌 Register Kafka Connect Sink](#10----register-kafka-connect-sink)
+    + [11. 📤 Produce Data to Kafka from CSV](#11----produce-data-to-kafka-from-csv)
+    + [12. 🔍 Analyze Data with PySpark](#12----analyze-data-with-pyspark)
+  * [Example Workflow](#example-workflow)
+    + [Docker Containers](#docker-containers)
+    + [Streaming Log Example](#streaming-log-example)
+    + [MinIO objects after streaming](#minio-objects-after-streaming)
+    + [Using PySpark to parse MinIO objects and perform a simple filtering](#using-pyspark-to-parse-minio-objects-and-perform-a-simple-filtering)
+    + [Spark Master UI](#spark-master-ui)
+    + [Frontend UI](#frontend-ui)
+    + [Querying transactions in English language by leveraging local LLM](#querying-transactions-in-english-language-by-leveraging-local-llm)
+
+
 # Personal Finance AI Data Pipeline
 Personal Finance AI Data Pipeline - Stream and store transactions. Analyze with Spark 3 and leverage a local LLM to write code based on human language input
-
-## 📚 Table of Contents
-
-- [🚀 Overview](#-overview)  
-- [🔧 Tech Stack and Project Components](#-tech-stack-and-project-components)  
-- [⚙️ Project Setup & Usage Guide](#️-project-setup--usage-guide)  
-  - [1. 📥 Clone the Repository](#1-📥-clone-the-repository)  
-  - [2. 🤖 Download the LLM of choice CodeLlama-7B-Instruct.Q4_K_M](#2-🤖-download-the-llm-of-choice-codellama-7b-instructq4_k_m)  
-  - [3. ☕ Install Java (JDK 22)](#3-☕-install-java-jdk-22)  
-  - [4. ⚡ Install Apache Spark 3.5.1](#4-⚡-install-apache-spark-351)  
-  - [5. 📦 Install Required JARs for MinIO Integration](#5-📦-install-required-jars-for-minio-integration)  
-  - [6. 🐳 Start Docker Containers](#6-🐳-start-docker-containers)  
-  - [7. 🪣 Create MinIO Bucket](#7-🪣-create-minio-bucket)  
-  - [8. 🌀 Create Kafka Topic](#8-🌀-create-kafka-topic)  
-  - [9. 💬 Kafka CLI Producer/Consumer](#9-💬-kafka-cli-producerconsumer)  
-  - [10. 🔌 Register Kafka Connect Sink](#10-🔌-register-kafka-connect-sink)  
-  - [11. 📤 Produce Data to Kafka from CSV](#11-📤-produce-data-to-kafka-from-csv)  
-  - [12. 🔍 Analyze Data with PySpark](#12-🔍-analyze-data-with-pyspark)  
-- [🧪 Example Workflow](#example-workflow)  
-  - [Docker Containers](#docker-containers)  
-  - [Streaming Log Example](#streaming-log-example)  
-  - [MinIO Objects after Streaming](#minio-objects-after-streaming)  
-  - [Using PySpark to Parse MinIO Objects and Perform a Simple Filtering](#using-pyspark-to-parse-minio-objects-and-perform-a-simple-filtering)  
-  - [Spark Master UI](#spark-master-ui)  
-  - [Frontend UI](#frontend-ui)  
-  - [Querying Transactions in English Language by Leveraging Local LLM](#querying-transactions-in-english-language-by-leveraging-local-llm)  
-
 
 ## 🚀 Overview
 
