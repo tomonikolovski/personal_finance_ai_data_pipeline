@@ -377,4 +377,6 @@ only showing top 20 rows
 ### Frontend UI
 <img width="1391" alt="image" src="https://github.com/user-attachments/assets/f8b714ab-7f53-4a9d-a0a8-3d72a8b750e9" />
 
+### Querying transactions in English language by leveraging local LLM
+![Untitled](https://github.com/user-attachments/assets/adf2fb33-0958-4c9a-b879-a47724341449)
 
