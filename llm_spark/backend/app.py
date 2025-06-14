@@ -56,6 +56,7 @@ def main():
             .config("spark.hadoop.fs.s3a.endpoint", 'http://{{}}:9000'.format(minio_ip)) \
             .getOrCreate()
         logger.info("Spark session created successfully.")
+        spark.sparkContext.setLogLevel("ERROR")
     except Exception as e:
         logger.error("Error creating Spark session: {{}}".format(e))
         sys.exit(1)
@@ -115,12 +116,17 @@ async def generate_and_run(prompt: Prompt):
     {prompt.description}
     \"\"\"
 
-    The data_frame has columns: Account Number, Account Type, CAD$, Description 1, Transaction Date.
-    CAD$ is amount, Description 1 is the company name.
+    The data_frame has columns: "Account Number", "Account Type", "CAD$", "Description 1", "Transaction Date".
+    "CAD$" is amount, "Description 1" is the company name.
 
     Guidelines:
-    - Only output the full Python function: def transactions_analyzer(data_frame, spark): 
-    - Use 'logger' for logging.
+    - Only output the full Python function: "def transactions_analyzer(data_frame, spark):"
+    - Do not generate anything else aside from the function code
+    - Generate a simple code
+    - Use pandas to work with the data_frame
+    - Don't return anything from the function
+    - Use 'logger' for logging
+    - Display the filtered data_frame with show() method
     - Always stop Spark with spark.stop() in finally block.
     """
 
