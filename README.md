@@ -1,5 +1,7 @@
 # Personal Finance AI Data Pipeline
 
+Personal Finance AI Data Pipeline - Stream and store transactions. Analyze with Spark 3 and leverage a local LLM to write code based on human language input
+
 - [Personal Finance AI Data Pipeline](#personal-finance-ai-data-pipeline)
   * [Overview](#overview)
   * [Tech Stack and project components](#tech-stack-and-project-components)
@@ -24,8 +26,6 @@
     + [Spark Master UI](#spark-master-ui)
     + [Frontend UI](#frontend-ui)
     + [Querying transactions in English language by leveraging local LLM](#querying-transactions-in-english-language-by-leveraging-local-llm)
-
-Personal Finance AI Data Pipeline - Stream and store transactions. Analyze with Spark 3 and leverage a local LLM to write code based on human language input
 
 ## Overview
 
