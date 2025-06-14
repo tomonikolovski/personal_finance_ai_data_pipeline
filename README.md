@@ -15,7 +15,7 @@
     + [9. Kafka CLI Producer/Consumer](#9-kafka-cli-producer-consumer)
     + [10. Register Kafka Connect Sink](#10-register-kafka-connect-sink)
     + [11. Produce Data to Kafka from CSV](#11-produce-data-to-kafka-from-csv)
-    + [12. 🔍 Analyze Data with PySpark](#12----analyze-data-with-pyspark)
+    + [12. Analyze Data with PySpark](#12-analyze-data-with-pyspark)
   * [Example Workflow](#example-workflow)
     + [Docker Containers](#docker-containers)
     + [Streaming Log Example](#streaming-log-example)
