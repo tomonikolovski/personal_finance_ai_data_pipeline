@@ -6,6 +6,7 @@ spark-client/*
 minio-data/*
 minio-data/**/.[!.]*
 apache-maven-3.9.7/downloaded_files
+llm_spark/backend/llm/*.gguf
 
 !spark-client/placeholder
 !minio-data/placeholder

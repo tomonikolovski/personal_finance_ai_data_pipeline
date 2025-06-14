@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PySpark Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Allow output container to grow based on content */
+    #output {
+      max-width: 100%;
+      display: block;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    /* Allow outer container to size based on content */
+    .dynamic-container {
+      width: fit-content;
+      max-width: 90vw;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white shadow-2xl rounded-2xl p-8 dynamic-container">
+    <h1 class="text-2xl font-bold mb-4 text-gray-800">Describe your task</h1>
+    <textarea id="description" rows="5"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              placeholder="e.g., Filter all transactions greater than 10"></textarea>
+    <button onclick="generate()"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200">
+      Submit
+    </button>
+    <pre id="output" class="mt-6 p-4 bg-gray-900 text-green-300 text-sm rounded-lg overflow-x-auto whitespace-pre-wrap w-fit max-w-full block"></pre>
+  </div>
+
+  <script>
+    async function generate() {
+      const description = document.getElementById("description").value;
+      const res = await fetch("http://localhost:8000/generate-and-run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description })
+      });
+      const data = await res.json();
+      const output = document.getElementById("output");
+      output.textContent =
+        "🔧 Generated Code:\n" + data.generated_code +
+        "\n\n📤 Output:\n" + data.output +
+        "\n\n⚠️ Errors:\n" + data.error;
+
+      // Optional: Adjust width based on longest line
+      const lines = output.textContent.split('\n');
+      const maxLineLength = Math.max(...lines.map(line => line.length));
+      output.style.width = `${Math.min(maxLineLength * 8, window.innerWidth * 0.9)}px`; // Estimate width in px
+    }
+  </script>
+</body>
+</html>

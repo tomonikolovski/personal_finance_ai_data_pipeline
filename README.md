@@ -1,86 +1,250 @@
-# Personal Data Pipeline with Kafka, MinIO and Spark3
+# Personal Finance AI Data Pipeline
 
-The purpose of this project is develop a data pipeline where you can stream financial transactions in a CSV format to Kafka, save them as json files on an object storage (MinIO in this case) and finally utilize Spark 3 to perform analysis of that data.
+- [Personal Finance AI Data Pipeline](#personal-finance-ai-data-pipeline)
+  * [Overview](#overview)
+  * [Tech Stack and project components](#tech-stack-and-project-components)
+  * [Project Setup & Usage Guide](#project-setup---usage-guide)
+    + [1. Clone the Repository](#1-clone-the-repository)
+    + [2. Download the LLM of choice CodeLlama-7B-Instruct.Q4_K_M](#2-download-the-llm-of-choice-codellama-7b-instruct-q4-km)
+    + [3. Install Java - JDK 22](#3-install-java---jdk-22)
+    + [4. Install Apache Spark 3.5.1](#4-install-apache-spark-351)
+    + [5. Install Required JARs for MinIO Integration](#5-install-required-jars-for-minio-integration)
+    + [6. Start Docker Containers](#6-start-docker-containers)
+    + [7. Create MinIO Bucket](#7-create-minio-bucket)
+    + [8. Create Kafka Topic](#8-create-kafka-topic)
+    + [9. Kafka CLI Producer/Consumer](#9-kafka-cli-producer-consumer)
+    + [10. Register Kafka Connect Sink](#10-register-kafka-connect-sink)
+    + [11. Produce Data to Kafka from CSV](#11-produce-data-to-kafka-from-csv)
+    + [12. 🔍 Analyze Data with PySpark](#12----analyze-data-with-pyspark)
+  * [Example Workflow](#example-workflow)
+    + [Docker Containers](#docker-containers)
+    + [Streaming Log Example](#streaming-log-example)
+    + [MinIO objects after streaming](#minio-objects-after-streaming)
+    + [Using PySpark to parse MinIO objects and perform a simple filtering](#using-pyspark-to-parse-minio-objects-and-perform-a-simple-filtering)
+    + [Spark Master UI](#spark-master-ui)
+    + [Frontend UI](#frontend-ui)
+    + [Querying transactions in English language by leveraging local LLM](#querying-transactions-in-english-language-by-leveraging-local-llm)
 
-## Components explanation
-Kafka - Streaming service
-Zookeeper - Needed to run Kafka. Keeps track of which brokers are part of the Kafka cluster. The alternative is to use KRAFT.
-Kafka Connect - The component that facilitates the data save from the Kafka topic to the object storage
-MinIO - Object storage to save data.
-Spark Master and Worker - A Spark 3 cluster to run the jobs
-RHEL container - Preconfigured Linux box from where you can run the Python/PySpark scripts.
+Personal Finance AI Data Pipeline - Stream and store transactions. Analyze with Spark 3 and leverage a local LLM to write code based on human language input
 
-## Project set up and usage example
-1. Clone the repo
-2. Download and untar java into the spark-client directory spark-client/jdk-22.0.1 - https://download.oracle.com/java/22/archive/jdk-22.0.1_linux-x64_bin.tar.gz
-3. Download and untar spark3 into the spark-client directory spark-client/spark-3.5.1-bin-hadoop3 - https://archive.apache.org/dist/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
-4. Make sure you have java installed and JAVA_HOME set correctly on your local machine
-5. Download additional Jar files to be able to interract with MinIO buckets from PySpark
-    - Pre-compiled Maven already present under apache-maven-3.9.7
-    - pom.xml with all neccessary repos set up already 
-    - ```cd apache-maven-3.9.7/bin``` and run ```./mvn dependency:copy-dependencies -DoutputDirectory=../downloaded_files/```
-    - Copy the files 
+## Overview
+
+This project is a personal finance AI data pipeline built to experiment with real-time data processing, storage, and AI-assisted analytics using modern open-source tools. It simulates a financial data workflow with both manual and AI-powered analysis capabilities.
+
+🧩 Key Components
+
+📥 Data Ingestion: Financial transactions (in CSV format) are streamed into Kafka.
+🗂️ Data Storage: The streamed data is transformed into JSON and stored in MinIO (an S3-compatible object store).
+📊 Data Analysis:
+- Manually write PySpark scripts to analyze the stored data using Apache Spark 3.
+- Or interact with a local LLM (Llama.cpp) through a FastAPI-based web interface. Users can enter natural language prompts (e.g., "Show me all transactions greater than 10 dollars").
+  - The LLM will convert the prompt into a valid PySpark query.
+  - The backend will execute the query against the Spark cluster.
+  - Return and display the results in the Web UI.
+
+## Tech Stack and project components
+This project leverages a modular set of open-source technologies to simulate a full AI-powered data analytics pipeline. Here's a breakdown of each component:
+
+🌀 Kafka
+Used for real-time streaming of financial transactions. Kafka handles the ingestion and buffering of data in motion.
+
+🐘 Zookeeper
+Required for managing Kafka in this setup. It maintains metadata and broker coordination. (Note: KRaft is a newer alternative that removes the Zookeeper dependency.)
+
+🔗 Kafka Connect
+Facilitates data transfer from Kafka topics to external storage. In this case, it streams Kafka messages into MinIO as JSON files.
+
+🗄️ MinIO
+An S3-compatible object storage system used to persist transaction data in a scalable, accessible format.
+
+⚡ Apache Spark 3
+Deployed as a Spark Master and one or more Workers, this cluster is responsible for distributed processing and analysis of the transaction data.
+
+🐍 RHEL Container (PySpark CLI)
+A pre-configured Red Hat Enterprise Linux container where users can manually run Python or PySpark scripts to interact with the stored data.
+
+🌐 FastAPI Frontend
+A lightweight web interface that allows users to input natural language prompts describing the analysis they want to perform.
+
+🧠 LLM Backend (Llama.cpp inference)
+A backend container running a local large language model via Llama.cpp. It:
+
+- Interprets natural language prompts by using CodeLlama-7B-Instruct-GGUF model,
+- Generates equivalent PySpark code,
+- Executes the code on the Spark cluster, and
+- Returns the results to the user.
+
+## Project Setup & Usage Guide
+
+Follow these steps to set up and run the project locally.
+
+---
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio.git
+cd personal_finance_data_pipeline_kafka_spark_minio
 ```
+
+---
+
+### 2. Download the LLM of choice CodeLlama 7B Instruct Q4 KM
+```bash
+wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_K_M.gguf -O codellama-7b-instruct.Q4_K_M.gguf
+mkdir -p llm_spark/backend/llm
+cp codellama-7b-instruct.Q4_K_M.gguf llm_spark/backend/llm/
+```
+
+---
+
+### 3. Install Java - JDK 22
+
+Download and extract Java into the Spark client directory:
+
+```bash
+wget https://download.oracle.com/java/22/latest/jdk-22_linux-x64_bin.tar.gz
+mkdir -p spark-client/jdk-22.0.1
+tar -xzf jdk-22_linux-x64_bin.tar.gz -C spark-client/jdk-22.0.1 --strip-components=1
+```
+
+---
+### 4. Install Apache Spark 3.5.1
+
+```bash
+wget https://archive.apache.org/dist/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
+mkdir -p spark-client/spark-3.5.1-bin-hadoop3
+tar -xzf spark-3.5.1-bin-hadoop3.tgz -C spark-client/spark-3.5.1-bin-hadoop3 --strip-components=1
+```
+
+---
+### 5. Install Required JARs for MinIO Integration
+
+Download additional Jar files to be able to interract with MinIO buckets from PySpark
+- Pre-compiled Maven already present under apache-maven-3.9.7
+- pom.xml with all neccessary repos set up already 
+
+```bash
+cd apache-maven-3.9.7/bin
+./mvn dependency:copy-dependencies -DoutputDirectory=../downloaded_files/
+```
+
+Copy the necessary JARs to the Spark JAR directory:
+
+```bash
 cp ../downloaded_files/hadoop-aws-3.3.4.jar ../../spark-client/spark-3.5.1-bin-hadoop3/jars/
 cp ../downloaded_files/aws-java-sdk-bundle-1.12.262.jar ../../spark-client/spark-3.5.1-bin-hadoop3/jars/
 ```
-5. Start the containers with docker compose up -d
-6. Create a MinIO bucket by navigating to http://localhost:9001/ or by using the CLI. Call it "bucket1" or anything else, but then make sure to update the s3-sink.json
-```
-Example CLI commands
 
+---
+
+### 6. Start Docker Containers
+
+```bash
+docker compose up -d
+```
+
+---
+### 7. Create MinIO Bucket
+
+Access MinIO UI at [http://localhost:9001](http://localhost:9001) or use the CLI:
+
+```bash
 mc config host add <ALIAS> <COS-ENDPOINT> <ACCESS-KEY> <SECRET-KEY>
 mc config host add minio http://minio:9000/ minio minio123
 mc ls minio
 mc mb minio/bucket1
 ```
-7. Create Kafka topic. Name it "topic1" or anything else, but then make sure to update the s3-sink.json file. Delete command attached just in a case.
-```
-# These commands could be run from any of the kafka containers
-kafka-topics --list --bootstrap-server kafka:9092
-kafka-topics --delete --topic topic1 --bootstrap-server kafka:9092
+
+> ⚠️ If you use a different bucket name, update the `s3-sink.json` file accordingly.
+
+---
+### 8. Create Kafka Topic
+
+Use the following commands in any Kafka container:
+
+```bash
+# Create topic
 kafka-topics --create --topic topic1 --bootstrap-server kafka:9092
+
+# List topics
 kafka-topics --list --bootstrap-server kafka:9092
+
+# Optional: Delete topic
+kafka-topics --delete --topic topic1 --bootstrap-server kafka:9092
 ```
 
-8. Kafka commands to consume and produce via the CLI
-```
+> ⚠️ If you use a different topic name, update the `s3-sink.json` file accordingly.
+--- 
+
+### 9. Kafka CLI Producer/Consumer
+
+To produce messages manually:
+
+```bash
 kafka-console-producer --bootstrap-server kafka:9092 --topic topic1
-kafka-console-consumer --bootstrap-server kafka:9092 --topic topic1 
 ```
 
-9. Publish the Kafka Connect sink configuration for the MinIO bucket. This enables Kafka to write the data to the MinIO bucket
+To consume messages:
+
+```bash
+kafka-console-consumer --bootstrap-server kafka:9092 --topic topic1
 ```
+
+---
+### 10. Register Kafka Connect Sink
+
+This step configures Kafka to write messages to the MinIO bucket:
+
+```bash
 curl -X POST -H "Content-Type: application/json" --data @s3-sink.json http://localhost:8083/connectors
 ```
 
-10. If you need to delete later on
-```
+To delete the connector later:
+
+```bash
 curl -X DELETE http://localhost:8083/connectors/s3-sink-connector
 ```
 
-11. Run a script to produce data to topic1. From the RHEL container navigate to /scripts and run
+---
+### 11. Produce Data to Kafka from CSV
+
+From inside the **RHEL container**, run the following:
+
+```bash
+cd /scripts
+python stream_csv_to_kafka.py --csv_file_path ./csv54304.csv --kafka_topic topic1
 ```
-python stream_csv_to_kafka.py --csv_file_path ./csv54304.csv --kafka_topic topic1 - This will publish the contents of the csv file to topic1
+
+📄 Output log: `./scripts/minio_transactions_parse_and_analyze.log`
+
+---
+
+### 12. 🔍 Analyze Data with PySpark
+
+Run a PySpark script to load, parse, and filter JSON data from MinIO:
+
+```bash
+python minio_transactions_parse_and_analyze.py \
+  --access minio \
+  --secret minio123 \
+  --s3_path "s3a://bucket1/topic1/partition=0/*.json"
 ```
-Example output log - ```./scripts/minio_transactions_parse_and_analyze.log```
 
-12. Run a PySpark script to parse all saved json transactions, save them in a DataFrame and run a simple filter over it. 
-``` 
-python minio_transactions_parse_and_analyze.py --access minio --secret minio123 --s3_path "s3a://bucket1/topic1/partition=0/*.json"
-```
-Example output log - ```./scripts/stream_csv_to_kafka_example_output.log```
+📄 Output log: `./scripts/stream_csv_to_kafka_example_output.log`
 
-## Example workflow
+---
+## Example Workflow
 
-### Docker containers
+### Docker Containers
 
-![1](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dbd7007f-3ed0-4b6e-ac65-afa7d575c346)
+![Docker Architecture](https://github.com/user-attachments/assets/eb48b3a9-88b5-4360-8854-2244913a19e0)>
 
-### Streaming log example
-<details open><summary>Streaming data</summary>
+---
+
+### Streaming Log Example
+
+<details open><summary>Streaming Data</summary>
 <p>
-
 
 ```python
 root@5ef8991ff11c:/scripts# python stream_csv_to_kafka.py --csv_file_path ./csv54304.csv --kafka_topic topic1
@@ -166,8 +330,12 @@ root@5ef8991ff11c:/scripts#
 </p>
 </details>
 
+---
+
 ### MinIO objects after streaming
-![2](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/224be657-103f-41f4-a17c-1ea026ecb821)
+![MinIO Objects](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/224be657-103f-41f4-a17c-1ea026ecb821)
+
+---
 
 ### Using PySpark to parse MinIO objects and perform a simple filtering
 
@@ -227,6 +395,13 @@ only showing top 20 rows
 </p>
 </details>
 
-### Spark Master UI
-![3](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dd227b3d-5d68-4948-9726-baa21dff2d7d)
+---
 
+### Spark Master UI
+![Spark Master UI](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dd227b3d-5d68-4948-9726-baa21dff2d7d)
+
+### Frontend UI
+<img width="1391" alt="image" src="https://github.com/user-attachments/assets/f8b714ab-7f53-4a9d-a0a8-3d72a8b750e9" />
+
+### Querying transactions in English language by leveraging local LLM
+![Untitled](https://github.com/user-attachments/assets/adf2fb33-0958-4c9a-b879-a47724341449)

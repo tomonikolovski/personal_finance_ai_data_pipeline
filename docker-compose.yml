@@ -72,28 +72,28 @@ services:
     volumes:
       - ./plugins:/usr/share/kafka/plugins
 
-  rhel_container:
-    image: python:3.8
-    container_name: rhel_container
-    # For Apple silicon M1, M2, M3 use linux/x86_64 platform for the rhel container as it needs to be compatible with the contents of the /opt/spark directory 
-    # platform: linux/x86_64
-    networks:
-      - docker-net
-    environment:
-      JAVA_HOME: /opt/spark/jdk-22.0.1
-      SPARK_HOME: /opt/spark/spark-3.5.1-bin-hadoop3
-      PATH: /opt/spark/spark-3.5.1-bin-hadoop3/bin:$PATH
-    command: >
-      sh -c "
-      pip install --upgrade pip &&
-      pip install kafka-python boto3 pyspark &&
-      tail -f /dev/null
-      "
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./scripts:/scripts
-      - ./spark-client:/opt/spark
+  # rhel_container:
+  #   image: python:3.8
+  #   container_name: rhel_container
+  #   # For Apple silicon M1, M2, M3 use linux/x86_64 platform for the rhel container as it needs to be compatible with the contents of the /opt/spark directory 
+  #   platform: linux/x86_64
+  #   networks:
+  #     - docker-net
+  #   environment:
+  #     JAVA_HOME: /opt/spark/jdk-22.0.1
+  #     SPARK_HOME: /opt/spark/spark-3.5.1-bin-hadoop3
+  #     PATH: /opt/spark/spark-3.5.1-bin-hadoop3/bin:$PATH
+  #   command: >
+  #     sh -c "
+  #     pip install --upgrade pip &&
+  #     pip install kafka-python boto3 pyspark &&
+  #     tail -f /dev/null
+  #     "
+  #   stdin_open: true
+  #   tty: true
+  #   volumes:
+  #     - ./scripts:/scripts
+  #     - ./spark-client:/opt/spark
 
   spark-master:
     image: bitnami/spark:3.5.1
@@ -123,6 +123,44 @@ services:
       SPARK_MASTER_URL: spark://spark-master:7077     
     command: [ "/opt/bitnami/scripts/spark/entrypoint.sh", "/opt/bitnami/scripts/spark/run.sh" ]
 
+  backend:
+    image: tiangolo/uvicorn-gunicorn-fastapi:python3.10
+    platform: linux/x86_64
+    volumes:
+      - ./llm_spark/backend:/app
+      - ./spark-client:/opt/spark
+    environment:
+      - MODULE_NAME=app
+      - VARIABLE_NAME=app
+      - MODEL_PATH=/app/llm/codellama-7b-instruct.Q4_K_M.gguf
+      - SPARK_MASTER=spark://spark-master:7077
+      - JAVA_HOME=/opt/spark/jdk-22.0.1
+      - SPARK_HOME=/opt/spark/spark-3.5.1-bin-hadoop3
+      - PATH=/opt/spark/spark-3.5.1-bin-hadoop3/bin:$PATH
+    networks:
+      - docker-net
+    command: >
+      /bin/bash -c "
+        apt-get update &&
+        apt-get install -y cmake build-essential &&
+        pip install --upgrade pip &&
+        pip install --no-cache-dir --verbose -r /app/requirements.txt &&
+        uvicorn app:app --host 0.0.0.0 --port 80
+      "
+    ports:
+      - "8000:80"
+    depends_on:
+      - spark-master
+
+  frontend:
+    image: nginx:alpine
+    volumes:
+      - ./llm_spark/frontend:/usr/share/nginx/html:ro
+    networks:
+      - docker-net
+    ports:
+      - "8082:80"
+      
 networks:
   docker-net:
 volumes:
