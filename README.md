@@ -88,7 +88,7 @@ cd personal_finance_data_pipeline_kafka_spark_minio
 
 ---
 
-### 2. Download the LLM of choice CodeLlama-7B-Instruct Q4_K_M
+### 2. Download the LLM of choice CodeLlama 7B Instruct Q4_K_M
 ```bash
 wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_K_M.gguf -O codellama-7b-instruct.Q4_K_M.gguf
 mkdir -p llm_spark/backend/llm
