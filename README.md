@@ -1,6 +1,6 @@
 # Personal Finance AI Data Pipeline
 
-Personal Finance AI Data Pipeline - Stream and store transactions. Analyze with Spark 3 and leverage a local LLM to write code based on human language input
+Personal Finance AI Data Pipeline - Stream (Kafka) and store (MinIO) transactions. Analyze with Spark 3 and leverage a local LLM to write code based on human language input
 
 - [Personal Finance AI Data Pipeline](#personal-finance-ai-data-pipeline)
   * [Overview](#overview)
@@ -36,13 +36,13 @@ This project is a personal finance AI data pipeline built to experiment with rea
 📥 Data Ingestion: Financial transactions (in CSV format) are streamed into Kafka.
 🗂️ Data Storage: The streamed data is transformed into JSON and stored in MinIO (an S3-compatible object store).
 📊 Data Analysis:
-- Manually write PySpark scripts to analyze the stored data using Apache Spark 3.
-- Or interact with a local LLM (Llama.cpp) through a FastAPI-based web interface. Users can enter natural language prompts (e.g., "Show me all transactions greater than 10 dollars").
+- **Manual Analysis:** Write PySpark scripts to analyze the stored data using Apache Spark 3.
+- **AI-Powered Analysis:** Interact with a local LLM (Llama.cpp) through a FastAPI-based web interface. Users can enter natural language prompts (e.g., "Show me all transactions greater than 10 dollars").
   - The LLM will convert the prompt into a valid PySpark query.
   - The backend will execute the query against the Spark cluster.
   - Return and display the results in the Web UI.
 
-## Tech Stack and project components
+## Tech Stack
 This project leverages a modular set of open-source technologies to simulate a full AI-powered data analytics pipeline. Here's a breakdown of each component:
 
 🌀 Kafka
@@ -73,6 +73,11 @@ A backend container running a local large language model via Llama.cpp. It:
 - Generates equivalent PySpark code,
 - Executes the code on the Spark cluster, and
 - Returns the results to the user.
+
+## 🧪 Use Cases
+- Build and test local financial analytics solutions.
+- Learn how modern streaming and AI pipelines work.
+- Prototype AI-driven query interfaces for enterprise or personal data lakes.
 
 ## Project Setup & Usage Guide
 
