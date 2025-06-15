@@ -4,7 +4,8 @@ Personal Finance AI Data Pipeline - Stream (Kafka) and store (MinIO) transaction
 
 - [Personal Finance AI Data Pipeline](#personal-finance-ai-data-pipeline)
   * [Overview](#overview)
-  * [Tech Stack and project components](#tech-stack-and-project-components)
+  * [Tech Stack](#tech-stack)
+  * [Use Cases](#use-cases)
   * [Project Setup & Usage Guide](#project-setup---usage-guide)
     + [1. Clone the Repository](#1-clone-the-repository)
     + [2. Download the LLM of choice CodeLlama-7B-Instruct.Q4_K_M](#2-download-the-llm-of-choice-codellama-7b-instruct-q4-km)
@@ -74,7 +75,7 @@ A backend container running a local large language model via Llama.cpp. It:
 - Executes the code on the Spark cluster, and
 - Returns the results to the user.
 
-## 🧪 Use Cases
+## Use Cases
 - Build and test local financial analytics solutions.
 - Learn how modern streaming and AI pipelines work.
 - Prototype AI-driven query interfaces for enterprise or personal data lakes.
