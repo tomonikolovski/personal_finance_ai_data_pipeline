@@ -88,8 +88,8 @@ Follow these steps to set up and run the project locally.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio.git
-cd personal_finance_data_pipeline_kafka_spark_minio
+git clone https://github.com/tomonikolovski/personal_finance_ai_data_pipeline.git
+cd personal_finance_ai_data_pipeline
 ```
 
 ---
