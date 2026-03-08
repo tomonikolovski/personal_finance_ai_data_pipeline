@@ -96,7 +96,7 @@ services:
   #     - ./spark-client:/opt/spark
 
   spark-master:
-    image: bitnami/spark:3.5.1
+    image: bitnamilegacy/spark:3.5.1
     container_name: spark-master
     hostname: spark-master
     platform: linux/arm64/v8
@@ -110,7 +110,7 @@ services:
     command: [ "/opt/bitnami/scripts/spark/entrypoint.sh", "/opt/bitnami/scripts/spark/run.sh" ]
 
   spark-worker:
-    image: bitnami/spark:3.5.1
+    image: bitnamilegacy/spark:3.5.1
     container_name: spark-worker
     hostname: spark-worker
     platform: linux/arm64/v8
