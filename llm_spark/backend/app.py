@@ -6,6 +6,12 @@ import subprocess
 from llama_cpp import Llama
 import os
 
+# optional OpenAI support
+try:
+    import openai
+except ImportError:
+    openai = None
+
 SCRIPT_TEMPLATE = '''
 import argparse
 import logging
@@ -95,12 +101,19 @@ app.add_middleware(
 MODEL_PATH = os.getenv("MODEL_PATH", "llm/codellama-7b-instruct.Q4_K_M.gguf")
 SPARK_MASTER = os.getenv("SPARK_MASTER", "spark://spark-master:7077")
 
-llm = Llama(
-    model_path=MODEL_PATH,  
-    n_ctx=4096,   # Context size, adjust as needed
-    n_threads=8,  # Depends on CPU
-    temperature=0.2,  # Lower temp for more deterministic code output
-)
+# choose whether to call OpenAI or local Llama
+USE_OPENAI = os.getenv("USE_OPENAI", "false").lower() in ("1","true","yes")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
+
+# initialize local LLM only if needed
+llm = None
+if not USE_OPENAI:
+    llm = Llama(
+        model_path=MODEL_PATH,  
+        n_ctx=4096,   # Context size, adjust as needed
+        n_threads=8,  # Depends on CPU
+        temperature=0.2,  # Lower temp for more deterministic code output
+    )
 
 class Prompt(BaseModel):
     description: str
@@ -123,20 +136,38 @@ async def generate_and_run(prompt: Prompt):
     - Only output the full Python function: "def transactions_analyzer(data_frame, spark):"
     - Do not generate anything else aside from the function code
     - Generate a simple code
-    - Use pandas to work with the data_frame
+    - Use pyspark to work with the data_frame
     - Don't return anything from the function
     - Use 'logger' for logging
     - Display the filtered data_frame with show() method
     - Always stop Spark with spark.stop() in finally block.
     """
 
-    # Generate code from LLM
-    output = llm(
-        prompt_text,
-        max_tokens=2048,   # Allow bigger responses
-        stop=["Task Description:","Full PySpark Script:"],  # Make sure it stops after code
-    )
-    transactions_analyzer = textwrap.dedent(output["choices"][0]["text"].strip().replace("\"\"\"",""))
+    # Generate code from either OpenAI or the local LLM
+    if USE_OPENAI:
+        if openai is None:
+            raise RuntimeError("OpenAI package not installed but USE_OPENAI is true")
+        # New OpenAI python client (>=1.0.0) uses an OpenAI class.
+        client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        response = client.chat.completions.create(
+            model=OPENAI_MODEL,
+            messages=[{"role": "user", "content": prompt_text}],
+            max_tokens=2048,
+            temperature=0.2,
+        )
+        # the structure remains similar for extracting the message text
+        transactions_analyzer = textwrap.dedent(
+            response.choices[0].message.content.strip().replace("\"\"\"", "")
+        )
+    else:
+        output = llm(
+            prompt_text,
+            max_tokens=2048,   # Allow bigger responses
+            stop=["Task Description:","Full PySpark Script:"],  # Make sure it stops after code
+        )
+        transactions_analyzer = textwrap.dedent(
+            output["choices"][0]["text"].strip().replace("\"\"\"", "")
+        )
     print(transactions_analyzer)
 
     full_script = SCRIPT_TEMPLATE.format(

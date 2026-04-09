@@ -38,8 +38,8 @@ This project is a personal finance AI data pipeline built to experiment with rea
 🗂️ Data Storage: The streamed data is transformed into JSON and stored in MinIO (an S3-compatible object store).
 📊 Data Analysis:
 - **Manual Analysis:** Write PySpark scripts to analyze the stored data using Apache Spark 3.
-- **AI-Powered Analysis:** Interact with a local LLM (Llama.cpp) through a FastAPI-based web interface. Users can enter natural language prompts (e.g., "Show me all transactions greater than 10 dollars").
-  - The LLM will convert the prompt into a valid PySpark query.
+- **AI-Powered Analysis:** Interact with a large language model via the FastAPI backend. By default the service uses a local LLM (Llama.cpp), but you can switch to OpenAI by setting `USE_OPENAI=true` and providing an `OPENAI_API_KEY`.
+  - The model will convert the prompt into a valid PySpark query.
   - The backend will execute the query against the Spark cluster.
   - Return and display the results in the Web UI.
 
@@ -94,12 +94,18 @@ cd personal_finance_ai_data_pipeline
 
 ---
 
-### 2. Download the LLM of choice CodeLlama 7B Instruct Q4 KM
+### 2. Download the LLM of choice CodeLlama 7B Instruct Q4 KM (if using local model)
 ```bash
 wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_K_M.gguf -O codellama-7b-instruct.Q4_K_M.gguf
 mkdir -p llm_spark/backend/llm
 cp codellama-7b-instruct.Q4_K_M.gguf llm_spark/backend/llm/
 ```
+
+> 💡 **Optional OpenAI Backend**
+> 
+> - If you'd rather have prompts handled by OpenAI instead of the local Llama model, set `USE_OPENAI=true` and make sure `OPENAI_API_KEY` is available in the environment when the container starts. **Do not** hardcode the key in `docker-compose.yml`; use your shell or an `.env` file instead (e.g. `export OPENAI_API_KEY="sk-..."`).
+>   - This code assumes `openai` Python package version **1.0.0 or later**; earlier releases used `openai.ChatCompletion` directly and are no longer supported.
+> - The `OPENAI_MODEL` variable can also be used to select a specific OpenAI model (default `gpt-4`).
 
 ---
 
@@ -409,5 +415,5 @@ only showing top 20 rows
 ### Frontend UI
 <img width="1391" alt="image" src="https://github.com/user-attachments/assets/f8b714ab-7f53-4a9d-a0a8-3d72a8b750e9" />
 
-### Querying transactions in English language by leveraging local LLM
+### Querying transactions in English language using the LLM backend (local or OpenAI)
 ![Untitled](https://github.com/user-attachments/assets/adf2fb33-0958-4c9a-b879-a47724341449)
