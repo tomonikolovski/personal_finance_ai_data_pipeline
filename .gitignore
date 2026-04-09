@@ -2,6 +2,8 @@
 #spark-client/spark-3.5.1-bin-hadoop3/jars/bundle-2.23.19.jar
 #spark-client/spark-3.5.1-bin-hadoop3/jars/aws-java-sdk-bundle-1.12.733.jar
 
+.env 
+
 spark-client/*
 minio-data/*
 minio-data/**/.[!.]*

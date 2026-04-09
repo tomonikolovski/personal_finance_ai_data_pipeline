@@ -5,3 +5,5 @@ pydantic
 kafka-python 
 boto3 
 pyspark
+openai
+pandas

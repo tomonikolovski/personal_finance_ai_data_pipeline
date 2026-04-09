@@ -4,8 +4,12 @@ Personal Finance AI Data Pipeline - Stream (Kafka) and store (MinIO) transaction
 
 - [Personal Finance AI Data Pipeline](#personal-finance-ai-data-pipeline)
   * [Overview](#overview)
-  * [Tech Stack](#tech-stack)
+  * [Skills Demonstrated](#skills-demonstrated)
+  * [Key Features](#key-features)
   * [Use Cases](#use-cases)
+  * [Architecture & Design Decisions](#architecture--design-decisions)
+  * [Technologies & Concepts](#technologies--concepts)
+  * [Tech Stack & Tools](#tech-stack--tools)
   * [Project Setup & Usage Guide](#project-setup---usage-guide)
     + [1. Clone the Repository](#1-clone-the-repository)
     + [2. Download the LLM of choice CodeLlama-7B-Instruct.Q4_K_M](#2-download-the-llm-of-choice-codellama-7b-instruct-q4-km)
@@ -38,12 +42,13 @@ This project is a personal finance AI data pipeline built to experiment with rea
 🗂️ Data Storage: The streamed data is transformed into JSON and stored in MinIO (an S3-compatible object store).
 📊 Data Analysis:
 - **Manual Analysis:** Write PySpark scripts to analyze the stored data using Apache Spark 3.
-- **AI-Powered Analysis:** Interact with a local LLM (Llama.cpp) through a FastAPI-based web interface. Users can enter natural language prompts (e.g., "Show me all transactions greater than 10 dollars").
-  - The LLM will convert the prompt into a valid PySpark query.
+- **AI-Powered Analysis:** Interact with a large language model via the FastAPI backend. By default the service uses a local LLM (Llama.cpp), but you can switch to OpenAI by setting `USE_OPENAI=true` and providing an `OPENAI_API_KEY`.
+  - The model will convert the prompt into a valid PySpark query.
   - The backend will execute the query against the Spark cluster.
   - Return and display the results in the Web UI.
 
-## Tech Stack
+## Tech Stack & Tools
+
 This project leverages a modular set of open-source technologies to simulate a full AI-powered data analytics pipeline. Here's a breakdown of each component:
 
 🌀 Kafka
@@ -75,10 +80,91 @@ A backend container running a local large language model via Llama.cpp. It:
 - Executes the code on the Spark cluster, and
 - Returns the results to the user.
 
+## Skills Demonstrated
+
+This project showcases expertise across multiple domains:
+
+- **Real-Time Data Streaming:** Kafka for high-throughput message processing and fault-tolerant data pipelines
+- **Distributed Computing:** Apache Spark for large-scale data processing and parallel analytics
+- **Object Storage Integration:** MinIO (S3-compatible) connectivity and advanced JAR integration with Spark
+- **AI/ML Integration:** Local LLM inference (Llama.cpp) and cloud provider integration (OpenAI API)
+- **Full-Stack Development:** FastAPI backend, React/HTML frontend, and REST API design
+- **DevOps & Containerization:** Docker Compose orchestration, multi-container networking, and service coordination
+- **Data Engineering:** ETL pipeline design, data transformation, JSON serialization, and distributed data analysis
+- **Python Development:** PySpark scripting, producer/consumer patterns, and data processing workflows
+
+## Key Features
+
+✅ **Real-Time Transaction Streaming** — Kafka ingests financial data from CSV sources with sub-second latency
+✅ **Natural Language Query Interface** — Request analyses in plain English; the LLM converts prompts to PySpark code automatically
+✅ **Flexible LLM Backend** — Toggle between local Llama.cpp inference and cloud providers (OpenAI) without code changes
+✅ **Seamless S3 Compatibility** — Use MinIO locally or swap with AWS S3 for cloud deployment
+✅ **Distributed Analysis** — Spark cluster processes data across multiple workers for scalable analytics
+✅ **Production-Ready Monitoring** — Spark UI, Kafka metrics, and structured logging across all components
+✅ **Extensible Architecture** — Modular design allows adding Flink, Kafka Streams, or other streaming frameworks
+
 ## Use Cases
-- Build and test local financial analytics solutions.
-- Learn how modern streaming and AI pipelines work.
-- Prototype AI-driven query interfaces for enterprise or personal data lakes.
+
+**Development & Learning:**
+- Build and test local financial analytics solutions
+- Learn real-time streaming, distributed computing, and AI integration patterns
+- Experiment with LLM-powered query interfaces before production deployment
+
+**Production Prototypes:**
+- Prototype AI-driven query interfaces for enterprise or personal data lakes
+- Rapid testing of financial analytics features with minimal infrastructure cost
+- Demonstrate AI capabilities to stakeholders with a fully functional PoC
+
+## Architecture & Design Decisions
+
+**Why Kafka over alternatives?**
+Kafka provides high-throughput, fault-tolerant message streaming with built-in partitioning and replication. Unlike direct Spark Streaming, Kafka decouples producers from consumers, enabling independent scaling and failure recovery.
+
+**Why Spark for analytics?**
+Apache Spark's distributed processing enables analysis of datasets larger than single-machine memory. Its Python API (PySpark) maintains code familiarity while providing enterprise-grade performance.
+
+**Local LLM vs Cloud API?**
+The project supports both: CodeLlama-7B runs locally (no API costs, data privacy), while OpenAI provides advanced reasoning for complex queries. The architecture allows switching at runtime based on cost/quality trade-offs.
+
+**MinIO for object storage?**
+MinIO is S3-compatible, enabling code portability. Deploy locally for development, swap to AWS S3 for production with zero application changes. Kafka Connect handles the streaming-to-storage bridge automatically.
+
+**Docker Compose for orchestration?**
+Ensures reproducibility across machines. The multi-container setup (Kafka, Zookeeper, MinIO, Spark, LLM backend, frontend) is defined in code, enabling CI/CD integration and easy environment replication.
+
+## Technologies & Concepts
+
+**Message Streaming & Pub-Sub Patterns**
+- Kafka brokers, topics, partitions, and consumer groups
+- Producer/consumer architectures and offset management
+- Error handling and retry logic in streaming workflows
+
+**Distributed Data Processing**
+- Spark RDDs, DataFrames, and lazy evaluation
+- Partitioning strategies and shuffle operations
+- Cost optimization through task parallelism
+
+**Data Formats & Serialization**
+- CSV parsing and validation
+- JSON serialization for cloud storage
+- Schema evolution and data type handling
+
+**LLM & AI Integration**
+- Prompt engineering and context management
+- Code generation from natural language
+- Error handling for AI-generated code execution
+- API integration (local inference vs cloud services)
+
+**Cloud-Native Architecture**
+- Containerization and image optimization
+- Service discovery and networking
+- Environment configuration management (`.env` files, secrets)
+- Reproducible infrastructure as code
+
+**Monitoring & Observability**
+- Structured logging with Python logging module (INFO, ERROR levels)
+- Web UI dashboards (Spark Master, MinIO console, FastAPI Swagger)
+- Health checks and error propagation across services
 
 ## Project Setup & Usage Guide
 
@@ -94,12 +180,18 @@ cd personal_finance_ai_data_pipeline
 
 ---
 
-### 2. Download the LLM of choice CodeLlama 7B Instruct Q4 KM
+### 2. Download the LLM of choice CodeLlama 7B Instruct Q4 KM (if using local model)
 ```bash
 wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_K_M.gguf -O codellama-7b-instruct.Q4_K_M.gguf
 mkdir -p llm_spark/backend/llm
 cp codellama-7b-instruct.Q4_K_M.gguf llm_spark/backend/llm/
 ```
+
+> 💡 **Optional OpenAI Backend**
+> 
+> - If you'd rather have prompts handled by OpenAI instead of the local Llama model, set `USE_OPENAI=true` and make sure `OPENAI_API_KEY` is available in the environment when the container starts. **Do not** hardcode the key in `docker-compose.yml`; use your shell or an `.env` file instead (e.g. `export OPENAI_API_KEY="sk-..."`).
+>   - This code assumes `openai` Python package version **1.0.0 or later**; earlier releases used `openai.ChatCompletion` directly and are no longer supported.
+> - The `OPENAI_MODEL` variable can also be used to select a specific OpenAI model (default `gpt-4`).
 
 ---
 
@@ -409,5 +501,5 @@ only showing top 20 rows
 ### Frontend UI
 <img width="1391" alt="image" src="https://github.com/user-attachments/assets/f8b714ab-7f53-4a9d-a0a8-3d72a8b750e9" />
 
-### Querying transactions in English language by leveraging local LLM
+### Querying transactions in English language using the LLM backend (local or OpenAI)
 ![Untitled](https://github.com/user-attachments/assets/adf2fb33-0958-4c9a-b879-a47724341449)
