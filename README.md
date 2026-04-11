@@ -46,6 +46,45 @@ This project is a personal finance AI data pipeline built to experiment with rea
   - The model will convert the prompt into a valid PySpark query.
   - The backend will execute the query against the Spark cluster.
   - Return and display the results in the Web UI.
+  
+- **MCP Server Integration:** Use AI assistants like Claude Desktop to directly query and analyze your transaction data through the Model Context Protocol. This enables conversational AI-driven analytics, allowing users to ask questions in natural language and receive insights powered by Spark and MinIO.
+
+## MCP Server Integration
+
+The project now includes a powerful Model Context Protocol (MCP) server that transforms your personal finance data pipeline into an AI-accessible analytics platform. This cutting-edge addition allows users to analyze their financial data through natural language queries via AI assistants like Claude Desktop, while leveraging the robust backend of Apache Spark and MinIO object storage.
+
+### Why MCP?
+MCP enables seamless integration with AI assistants, allowing users to query their data using conversational language instead of writing code. This demonstrates advanced skills in AI integration, protocol design, and user experience innovation.
+
+### Available Tools
+- **analyze_spending**: Deep-dive into spending patterns with customizable filters by date, category, or amount
+- **categorize_transactions**: AI-powered automatic categorization of transactions based on merchant descriptions
+- **detect_anomalies**: Intelligent anomaly detection to identify unusual spending or potential fraudulent activity
+- **compare_periods**: Sophisticated period-over-period analysis to track financial trends
+
+### Available Resources
+- **transaction://schema**: Complete JSON schema documentation for transaction data structure
+- **transaction://stats**: Real-time statistics about your transaction dataset
+
+### Setup with Claude Desktop
+1. Copy the `claude_desktop_config.json` to your Claude Desktop configuration directory
+2. Restart Claude Desktop
+3. The MCP server becomes available as a native tool for Claude to use
+
+### Example Queries
+- "How much did I spend on dining out last quarter?"
+- "Are there any suspicious transactions over $500 this year?"
+- "Compare my grocery spending this month vs last month"
+- "Categorize all my transactions from the past 6 months"
+- "Show me my top spending categories for 2024"
+
+### Testing
+Run the test script to verify the MCP server functionality:
+```bash
+./test_mcp.sh
+```
+
+This MCP integration showcases expertise in modern AI protocols, distributed systems, and user-centric design, making this project an excellent demonstration of full-stack data engineering and AI capabilities.
 
 ## Tech Stack & Tools
 
@@ -80,6 +119,14 @@ A backend container running a local large language model via Llama.cpp. It:
 - Executes the code on the Spark cluster, and
 - Returns the results to the user.
 
+🤖 MCP Transaction Analyzer
+An MCP (Model Context Protocol) server that enables AI assistants to directly interact with your financial data:
+
+- Provides tools for spending analysis, categorization, and anomaly detection
+- Exposes transaction data schema and statistics as resources
+- Integrates with Claude Desktop and other MCP-compatible AI assistants
+- Enables natural language queries against your data lake backed by Spark and MinIO
+
 ## Skills Demonstrated
 
 This project showcases expertise across multiple domains:
@@ -88,6 +135,7 @@ This project showcases expertise across multiple domains:
 - **Distributed Computing:** Apache Spark for large-scale data processing and parallel analytics
 - **Object Storage Integration:** MinIO (S3-compatible) connectivity and advanced JAR integration with Spark
 - **AI/ML Integration:** Local LLM inference (Llama.cpp) and cloud provider integration (OpenAI API)
+- **MCP Protocol Development:** Model Context Protocol server implementation for AI assistant integration
 - **Full-Stack Development:** FastAPI backend, React/HTML frontend, and REST API design
 - **DevOps & Containerization:** Docker Compose orchestration, multi-container networking, and service coordination
 - **Data Engineering:** ETL pipeline design, data transformation, JSON serialization, and distributed data analysis
@@ -95,6 +143,7 @@ This project showcases expertise across multiple domains:
 
 ## Key Features
 
+✅ **AI Assistant Integration** — MCP server enables conversational queries through Claude Desktop and other AI assistants
 ✅ **Real-Time Transaction Streaming** — Kafka ingests financial data from CSV sources with sub-second latency
 ✅ **Natural Language Query Interface** — Request analyses in plain English; the LLM converts prompts to PySpark code automatically
 ✅ **Flexible LLM Backend** — Toggle between local Llama.cpp inference and cloud providers (OpenAI) without code changes
@@ -331,6 +380,55 @@ python minio_transactions_parse_and_analyze.py \
 📄 Output log: `./scripts/stream_csv_to_kafka_example_output.log`
 
 ---
+
+### 13. 🚀 MCP Server for AI-Powered Transaction Analysis (Optional)
+
+The project now includes an MCP (Model Context Protocol) server that enables AI assistants like Claude to directly analyze your transaction data.
+
+#### Features
+- **Natural Language Queries**: Ask questions like "How much did I spend on food last month?"
+- **Automated Categorization**: Automatically group transactions by category
+- **Anomaly Detection**: Find unusual transactions above thresholds
+- **Period Comparison**: Compare spending across different time periods
+
+#### Setup MCP with Claude Desktop
+
+1. **Install Claude Desktop** (if not already installed)
+
+2. **Configure MCP Server**: Add this to your Claude Desktop config file:
+
+   **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   
+   ```json
+   {
+     "mcpServers": {
+       "transaction-analyzer": {
+         "command": "docker",
+         "args": ["exec", "mcp-transaction-analyzer", "python", "/app/server.py"],
+         "cwd": "/path/to/your/project"
+       }
+     }
+   }
+   ```
+
+3. **Restart Claude Desktop**
+
+4. **Test the Integration**: Ask Claude questions about your transaction data!
+
+#### Example Queries
+- "Analyze my spending patterns for the last month"
+- "Show me transactions over $500"
+- "Compare spending between January and February"
+- "Categorize my expenses and show the breakdown"
+
+#### MCP Server Details
+- **Location**: `mcp_transaction_analyzer/` directory
+- **Tools Available**: `analyze_spending`, `categorize_transactions`, `detect_anomalies`, `compare_periods`
+- **Resources**: `transaction://schema`, `transaction://stats`
+- **Documentation**: See `mcp_transaction_analyzer/README.md`
+
+---
+
 ## Example Workflow
 
 ### Docker Containers
