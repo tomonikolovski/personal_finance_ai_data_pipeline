@@ -642,3 +642,19 @@ only showing top 20 rows
 
 ### Querying transactions in English language using the LLM backend (local or OpenAI)
 ![Untitled](https://github.com/user-attachments/assets/adf2fb33-0958-4c9a-b879-a47724341449)
+
+### Leveraging Claude Desktop for MCP driven analytics
+
+How much money have I spent over each month?
+<img width="910" height="918" alt="Claude MCP 1" src="https://github.com/user-attachments/assets/dc52e88f-f26e-400e-81ee-5ea2ee684ab7" />
+
+Spark kicking off in the background
+<img width="1105" height="918" alt="Claude MCP 3" src="https://github.com/user-attachments/assets/b019dfe9-2554-447f-af2c-07923c4de869" />
+
+Deepdive 1
+<img width="1105" height="918" alt="Claude MCP 4" src="https://github.com/user-attachments/assets/f9377750-ba21-4494-9f09-8e1d763c9af4" />
+
+Check unusual transactions.
+<img width="1105" height="918" alt="Claude MCP 5" src="https://github.com/user-attachments/assets/ecf93025-3eb2-4b39-9819-44ceff25cda0" />
+
+
