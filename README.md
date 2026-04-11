@@ -51,32 +51,73 @@ This project is a personal finance AI data pipeline built to experiment with rea
 
 ## MCP Server Integration
 
-The project now includes a powerful Model Context Protocol (MCP) server that transforms your personal finance data pipeline into an AI-accessible analytics platform. This cutting-edge addition allows users to analyze their financial data through natural language queries via AI assistants like Claude Desktop, while leveraging the robust backend of Apache Spark and MinIO object storage.
+The project includes a Model Context Protocol (MCP) server that transforms your personal finance data pipeline into an AI-accessible analytics platform. This allows users to analyze their financial data through natural language queries via AI assistants like Claude Desktop, while leveraging the robust backend of Apache Spark and MinIO object storage.
 
 ### Why MCP?
 MCP enables seamless integration with AI assistants, allowing users to query their data using conversational language instead of writing code. This demonstrates advanced skills in AI integration, protocol design, and user experience innovation.
 
 ### Available Tools
-- **analyze_spending**: Deep-dive into spending patterns with customizable filters by date, category, or amount
-- **categorize_transactions**: AI-powered automatic categorization of transactions based on merchant descriptions
-- **detect_anomalies**: Intelligent anomaly detection to identify unusual spending or potential fraudulent activity
-- **compare_periods**: Sophisticated period-over-period analysis to track financial trends
+
+| Tool | Description |
+|---|---|
+| **monthly_spending_summary** | Break down total spending and income by calendar month. Answers questions like "how much did I spend in April?" or "show me my monthly cash flow". |
+| **top_transactions** | Return the N largest transactions by absolute amount. Filterable to spending-only or income-only. Answers "what's my biggest expense?" or "what's the largest transaction?" |
+| **merchant_summary** | Group and rank transactions by merchant with totals, counts, and averages. Answers "where am I spending the most?" or "which merchants do I use most?" |
+| **categorize_transactions** | Classify transactions into categories (Food & Dining, Transportation, Entertainment, Shopping, Utilities & Housing, Health & Pharmacy, Transfers & Income, Insurance, Cash & ATM) with totals and percentage breakdowns. Supports `spending`, `income`, or `both` directions. |
+| **detect_anomalies** | Flag unusually large transactions above a configurable threshold. Each result is clearly labelled as spending (withdrawal) or income (deposit). Helps spot unexpected charges or large incoming payments. |
+| **compare_periods** | Compare total spending, income, and net cash flow between two date ranges, including percentage change. Answers "did I spend more in Q1 or Q2?" |
 
 ### Available Resources
-- **transaction://schema**: Complete JSON schema documentation for transaction data structure
-- **transaction://stats**: Real-time statistics about your transaction dataset
+
+| Resource | Description |
+|---|---|
+| `transaction://schema` | Documents all JSON fields as stored in MinIO, including the data type corrections applied at load time (`CAD$` string → double, `Transaction Date` M/D/YYYY → DateType). |
+| `transaction://stats` | Real-time dataset statistics: total record count, date range, total spending, total income, and net cash flow. |
+| `transaction://categories` | Reference list of all keywords used to classify transactions into categories — useful context for the AI when answering category-related questions. |
+
+### Data Handling Notes
+
+The raw JSON records stored in MinIO (produced by Kafka Connect from the CSV source) have two quirks that the MCP server corrects automatically at load time:
+
+- **`CAD$` is a string** (e.g. `"-65.54"`) — cast to `double` into a clean `amount` column for all numeric operations.
+- **`Transaction Date` is `M/D/YYYY`** (e.g. `"4/15/2024"`) — parsed into a proper `DateType` column (`tx_date`) using `to_date(..., "M/d/yyyy")` so that date filtering and month grouping work correctly.
+
+**Sign convention:** negative `CAD$` values are withdrawals/spending; positive values are incoming money/income. All tools label results accordingly (`OUT`/`IN` or `SPEND`/`INCOME`).
 
 ### Setup with Claude Desktop
-1. Copy the `claude_desktop_config.json` to your Claude Desktop configuration directory
-2. Restart Claude Desktop
-3. The MCP server becomes available as a native tool for Claude to use
+
+1. **Install Claude Desktop** (if not already installed)
+
+2. **Configure MCP Server**: Add this to your Claude Desktop config file:
+
+   **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+   ```json
+   {
+     "mcpServers": {
+       "transaction-analyzer": {
+         "command": "docker",
+         "args": ["exec", "mcp-transaction-analyzer", "python", "/app/server.py"],
+         "cwd": "/path/to/your/project"
+       }
+     }
+   }
+   ```
+
+3. **Restart Claude Desktop**
+
+4. **Test the Integration**: Ask Claude questions about your transaction data!
 
 ### Example Queries
-- "How much did I spend on dining out last quarter?"
-- "Are there any suspicious transactions over $500 this year?"
-- "Compare my grocery spending this month vs last month"
-- "Categorize all my transactions from the past 6 months"
-- "Show me my top spending categories for 2024"
+
+- "How much did I spend each month this year?"
+- "What are my top 10 largest expenses?"
+- "Which merchants am I spending the most money at?"
+- "Categorize all my transactions and show me the breakdown"
+- "Are there any transactions over $500 this year?"
+- "Compare my spending between April and May"
+- "Show me all large incoming payments above $1000"
+- "What percentage of my spending goes to Food & Dining?"
 
 ### Testing
 Run the test script to verify the MCP server functionality:
