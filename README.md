@@ -53,79 +53,7 @@ This project is a personal finance AI data pipeline built to experiment with rea
 
 The project includes a Model Context Protocol (MCP) server that transforms your personal finance data pipeline into an AI-accessible analytics platform. This allows users to analyze their financial data through natural language queries via AI assistants like Claude Desktop, while leveraging the robust backend of Apache Spark and MinIO object storage.
 
-### Why MCP?
-MCP enables seamless integration with AI assistants, allowing users to query their data using conversational language instead of writing code. This demonstrates advanced skills in AI integration, protocol design, and user experience innovation.
 
-### Available Tools
-
-| Tool | Description |
-|---|---|
-| **monthly_spending_summary** | Break down total spending and income by calendar month. Answers questions like "how much did I spend in April?" or "show me my monthly cash flow". |
-| **top_transactions** | Return the N largest transactions by absolute amount. Filterable to spending-only or income-only. Answers "what's my biggest expense?" or "what's the largest transaction?" |
-| **merchant_summary** | Group and rank transactions by merchant with totals, counts, and averages. Answers "where am I spending the most?" or "which merchants do I use most?" |
-| **categorize_transactions** | Classify transactions into categories (Food & Dining, Transportation, Entertainment, Shopping, Utilities & Housing, Health & Pharmacy, Transfers & Income, Insurance, Cash & ATM) with totals and percentage breakdowns. Supports `spending`, `income`, or `both` directions. |
-| **detect_anomalies** | Flag unusually large transactions above a configurable threshold. Each result is clearly labelled as spending (withdrawal) or income (deposit). Helps spot unexpected charges or large incoming payments. |
-| **compare_periods** | Compare total spending, income, and net cash flow between two date ranges, including percentage change. Answers "did I spend more in Q1 or Q2?" |
-
-### Available Resources
-
-| Resource | Description |
-|---|---|
-| `transaction://schema` | Documents all JSON fields as stored in MinIO, including the data type corrections applied at load time (`CAD$` string → double, `Transaction Date` M/D/YYYY → DateType). |
-| `transaction://stats` | Real-time dataset statistics: total record count, date range, total spending, total income, and net cash flow. |
-| `transaction://categories` | Reference list of all keywords used to classify transactions into categories — useful context for the AI when answering category-related questions. |
-
-### Data Handling Notes
-
-The raw JSON records stored in MinIO (produced by Kafka Connect from the CSV source) have two quirks that the MCP server corrects automatically at load time:
-
-- **`CAD$` is a string** (e.g. `"-65.54"`) — cast to `double` into a clean `amount` column for all numeric operations.
-- **`Transaction Date` is `M/D/YYYY`** (e.g. `"4/15/2024"`) — parsed into a proper `DateType` column (`tx_date`) using `to_date(..., "M/d/yyyy")` so that date filtering and month grouping work correctly.
-
-**Sign convention:** negative `CAD$` values are withdrawals/spending; positive values are incoming money/income. All tools label results accordingly (`OUT`/`IN` or `SPEND`/`INCOME`).
-
-### Setup with Claude Desktop
-
-1. **Install Claude Desktop** (if not already installed)
-
-2. **Configure MCP Server**: Add this to your Claude Desktop config file:
-
-   **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-
-   ```json
-   {
-     "mcpServers": {
-       "transaction-analyzer": {
-         "command": "docker",
-         "args": ["exec", "mcp-transaction-analyzer", "python", "/app/server.py"],
-         "cwd": "/path/to/your/project"
-       }
-     }
-   }
-   ```
-
-3. **Restart Claude Desktop**
-
-4. **Test the Integration**: Ask Claude questions about your transaction data!
-
-### Example Queries
-
-- "How much did I spend each month this year?"
-- "What are my top 10 largest expenses?"
-- "Which merchants am I spending the most money at?"
-- "Categorize all my transactions and show me the breakdown"
-- "Are there any transactions over $500 this year?"
-- "Compare my spending between April and May"
-- "Show me all large incoming payments above $1000"
-- "What percentage of my spending goes to Food & Dining?"
-
-### Testing
-Run the test script to verify the MCP server functionality:
-```bash
-./test_mcp.sh
-```
-
-This MCP integration showcases expertise in modern AI protocols, distributed systems, and user-centric design, making this project an excellent demonstration of full-stack data engineering and AI capabilities.
 
 ## Tech Stack & Tools
 
@@ -168,93 +96,6 @@ An MCP (Model Context Protocol) server that enables AI assistants to directly in
 - Integrates with Claude Desktop and other MCP-compatible AI assistants
 - Enables natural language queries against your data lake backed by Spark and MinIO
 
-## Skills Demonstrated
-
-This project showcases expertise across multiple domains:
-
-- **Real-Time Data Streaming:** Kafka for high-throughput message processing and fault-tolerant data pipelines
-- **Distributed Computing:** Apache Spark for large-scale data processing and parallel analytics
-- **Object Storage Integration:** MinIO (S3-compatible) connectivity and advanced JAR integration with Spark
-- **AI/ML Integration:** Local LLM inference (Llama.cpp) and cloud provider integration (OpenAI API)
-- **MCP Protocol Development:** Model Context Protocol server implementation for AI assistant integration
-- **Full-Stack Development:** FastAPI backend, React/HTML frontend, and REST API design
-- **DevOps & Containerization:** Docker Compose orchestration, multi-container networking, and service coordination
-- **Data Engineering:** ETL pipeline design, data transformation, JSON serialization, and distributed data analysis
-- **Python Development:** PySpark scripting, producer/consumer patterns, and data processing workflows
-
-## Key Features
-
-✅ **AI Assistant Integration** — MCP server enables conversational queries through Claude Desktop and other AI assistants
-✅ **Real-Time Transaction Streaming** — Kafka ingests financial data from CSV sources with sub-second latency
-✅ **Natural Language Query Interface** — Request analyses in plain English; the LLM converts prompts to PySpark code automatically
-✅ **Flexible LLM Backend** — Toggle between local Llama.cpp inference and cloud providers (OpenAI) without code changes
-✅ **Seamless S3 Compatibility** — Use MinIO locally or swap with AWS S3 for cloud deployment
-✅ **Distributed Analysis** — Spark cluster processes data across multiple workers for scalable analytics
-✅ **Production-Ready Monitoring** — Spark UI, Kafka metrics, and structured logging across all components
-✅ **Extensible Architecture** — Modular design allows adding Flink, Kafka Streams, or other streaming frameworks
-
-## Use Cases
-
-**Development & Learning:**
-- Build and test local financial analytics solutions
-- Learn real-time streaming, distributed computing, and AI integration patterns
-- Experiment with LLM-powered query interfaces before production deployment
-
-**Production Prototypes:**
-- Prototype AI-driven query interfaces for enterprise or personal data lakes
-- Rapid testing of financial analytics features with minimal infrastructure cost
-- Demonstrate AI capabilities to stakeholders with a fully functional PoC
-
-## Architecture & Design Decisions
-
-**Why Kafka over alternatives?**
-Kafka provides high-throughput, fault-tolerant message streaming with built-in partitioning and replication. Unlike direct Spark Streaming, Kafka decouples producers from consumers, enabling independent scaling and failure recovery.
-
-**Why Spark for analytics?**
-Apache Spark's distributed processing enables analysis of datasets larger than single-machine memory. Its Python API (PySpark) maintains code familiarity while providing enterprise-grade performance.
-
-**Local LLM vs Cloud API?**
-The project supports both: CodeLlama-7B runs locally (no API costs, data privacy), while OpenAI provides advanced reasoning for complex queries. The architecture allows switching at runtime based on cost/quality trade-offs.
-
-**MinIO for object storage?**
-MinIO is S3-compatible, enabling code portability. Deploy locally for development, swap to AWS S3 for production with zero application changes. Kafka Connect handles the streaming-to-storage bridge automatically.
-
-**Docker Compose for orchestration?**
-Ensures reproducibility across machines. The multi-container setup (Kafka, Zookeeper, MinIO, Spark, LLM backend, frontend) is defined in code, enabling CI/CD integration and easy environment replication.
-
-## Technologies & Concepts
-
-**Message Streaming & Pub-Sub Patterns**
-- Kafka brokers, topics, partitions, and consumer groups
-- Producer/consumer architectures and offset management
-- Error handling and retry logic in streaming workflows
-
-**Distributed Data Processing**
-- Spark RDDs, DataFrames, and lazy evaluation
-- Partitioning strategies and shuffle operations
-- Cost optimization through task parallelism
-
-**Data Formats & Serialization**
-- CSV parsing and validation
-- JSON serialization for cloud storage
-- Schema evolution and data type handling
-
-**LLM & AI Integration**
-- Prompt engineering and context management
-- Code generation from natural language
-- Error handling for AI-generated code execution
-- API integration (local inference vs cloud services)
-
-**Cloud-Native Architecture**
-- Containerization and image optimization
-- Service discovery and networking
-- Environment configuration management (`.env` files, secrets)
-- Reproducible infrastructure as code
-
-**Monitoring & Observability**
-- Structured logging with Python logging module (INFO, ERROR levels)
-- Web UI dashboards (Spark Master, MinIO console, FastAPI Swagger)
-- Health checks and error propagation across services
 
 ## Project Setup & Usage Guide
 
@@ -270,15 +111,14 @@ cd personal_finance_ai_data_pipeline
 
 ---
 
-### 2. Download the LLM of choice CodeLlama 7B Instruct Q4 KM (if using local model)
+### 2. Leverage a local LLM or OpenAI API for 
+#### Local LLM of choice CodeLlama 7B Instruct Q4 KM 
 ```bash
 wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_K_M.gguf -O codellama-7b-instruct.Q4_K_M.gguf
 mkdir -p llm_spark/backend/llm
 cp codellama-7b-instruct.Q4_K_M.gguf llm_spark/backend/llm/
 ```
-
-> 💡 **Optional OpenAI Backend**
-> 
+#### OpenAI API
 > - If you'd rather have prompts handled by OpenAI instead of the local Llama model, set `USE_OPENAI=true` and make sure `OPENAI_API_KEY` is available in the environment when the container starts. **Do not** hardcode the key in `docker-compose.yml`; use your shell or an `.env` file instead (e.g. `export OPENAI_API_KEY="sk-..."`).
 >   - This code assumes `openai` Python package version **1.0.0 or later**; earlier releases used `openai.ChatCompletion` directly and are no longer supported.
 > - The `OPENAI_MODEL` variable can also be used to select a specific OpenAI model (default `gpt-4`).
@@ -422,16 +262,13 @@ python minio_transactions_parse_and_analyze.py \
 
 ---
 
-### 13. 🚀 MCP Server for AI-Powered Transaction Analysis (Optional)
+### 13. Leverage the Frontend UI to ask questions about the data in natural language.
 
-The project now includes an MCP (Model Context Protocol) server that enables AI assistants like Claude to directly analyze your transaction data.
+```
+Load localhost:8082 and ask questions about your data in natural language.
+```
 
-#### Features
-- **Natural Language Queries**: Ask questions like "How much did I spend on food last month?"
-- **Automated Categorization**: Automatically group transactions by category
-- **Anomaly Detection**: Find unusual transactions above thresholds
-- **Period Comparison**: Compare spending across different time periods
-
+### 14. 🚀 MCP Server for AI-Powered Transaction Analysis
 #### Setup MCP with Claude Desktop
 
 1. **Install Claude Desktop** (if not already installed)
@@ -455,18 +292,6 @@ The project now includes an MCP (Model Context Protocol) server that enables AI 
 3. **Restart Claude Desktop**
 
 4. **Test the Integration**: Ask Claude questions about your transaction data!
-
-#### Example Queries
-- "Analyze my spending patterns for the last month"
-- "Show me transactions over $500"
-- "Compare spending between January and February"
-- "Categorize my expenses and show the breakdown"
-
-#### MCP Server Details
-- **Location**: `mcp_transaction_analyzer/` directory
-- **Tools Available**: `analyze_spending`, `categorize_transactions`, `detect_anomalies`, `compare_periods`
-- **Resources**: `transaction://schema`, `transaction://stats`
-- **Documentation**: See `mcp_transaction_analyzer/README.md`
 
 ---
 
@@ -637,7 +462,7 @@ only showing top 20 rows
 ### Spark Master UI
 ![Spark Master UI](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dd227b3d-5d68-4948-9726-baa21dff2d7d)
 
-### Frontend UI
+### Frontend UI, asking questions in natural language 
 <img width="1391" alt="image" src="https://github.com/user-attachments/assets/f8b714ab-7f53-4a9d-a0a8-3d72a8b750e9" />
 
 ### Querying transactions in English language using the LLM backend (local or OpenAI)
