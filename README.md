@@ -37,8 +37,10 @@ This project is a personal finance AI data pipeline built to experiment with rea
 
 🧩 Key Components
 
-📥 Data Ingestion: Financial transactions (in CSV format) are streamed into Kafka.
-🗂️ Data Storage: The streamed data is transformed into JSON and stored in MinIO (an S3-compatible object store).
+📥 Data Ingestion: Financial transactions (in CSV format) are streamed with Kafka.
+
+🗂️ Data Storage: The streamed data is serialized into JSON and stored in MinIO (an S3-compatible object store).
+
 📊 Data Analysis:
 - **Manual Analysis:** Write PySpark scripts to analyze the stored data using Apache Spark 3.
 - **AI-Powered Analysis:** Interact with a large language model via the FastAPI backend. By default the service uses a local LLM (Llama.cpp), but you can switch to OpenAI by setting `USE_OPENAI=true` and providing an `OPENAI_API_KEY`.
@@ -47,10 +49,6 @@ This project is a personal finance AI data pipeline built to experiment with rea
   - Return and display the results in the Web UI.
   
 - **MCP Server Integration:** Use AI assistants like Claude Desktop to directly query and analyze your transaction data through the Model Context Protocol. This enables conversational AI-driven analytics, allowing users to ask questions in natural language and receive insights powered by Spark and MinIO.
-
-## MCP Server Integration
-
-The project includes a Model Context Protocol (MCP) server that transforms your personal finance data pipeline into an AI-accessible analytics platform. This allows users to analyze their financial data through natural language queries via AI assistants like Claude Desktop, while leveraging the robust backend of Apache Spark and MinIO object storage.
 
 
 
