@@ -35,7 +35,7 @@ Personal Finance AI Data Pipeline - Stream (Kafka) and store (MinIO) transaction
 
 This project is a personal finance AI data pipeline built to experiment with real-time data processing, storage, and AI-assisted analytics using modern open-source tools. It simulates a financial data workflow with both manual and AI-powered analysis capabilities.
 
-🧩 Key Components
+🧩 Key Components:
 
 📥 Data Ingestion: Financial transactions (in CSV format) are streamed with Kafka.
 
