@@ -473,7 +473,7 @@ How much money have I spent over each month?
 Spark kicking off in the background
 <img width="1105" height="918" alt="Claude MCP 3" src="https://github.com/user-attachments/assets/b019dfe9-2554-447f-af2c-07923c4de869" />
 
-Deepdive 1
+Deep dive 1
 <img width="1105" height="918" alt="Claude MCP 4" src="https://github.com/user-attachments/assets/f9377750-ba21-4494-9f09-8e1d763c9af4" />
 
 Check unusual transactions.
