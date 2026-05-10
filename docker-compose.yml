@@ -164,6 +164,38 @@ services:
       - docker-net
     ports:
       - "8082:80"
+
+  mcp-transaction-analyzer:
+    image: python:3.11-slim
+    container_name: mcp-transaction-analyzer
+    platform: linux/x86_64
+    volumes:
+      - ./mcp_transaction_analyzer:/app
+      - ./spark-client:/opt/spark:ro
+    working_dir: /app
+    environment:
+      - MINIO_ACCESS_KEY=minio
+      - MINIO_SECRET_KEY=minio123
+      - MINIO_ENDPOINT=http://minio:9000
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+      - SPARK_HOME=/opt/spark/spark-3.5.1-bin-hadoop3
+      - PATH=/usr/lib/jvm/java-21-openjdk-amd64/bin:/opt/spark/spark-3.5.1-bin-hadoop3/bin:$PATH
+      - PYTHONPATH=/app
+    command: >
+      /bin/bash -c "
+        apt-get update &&
+        apt-get install -y curl procps openjdk-21-jre-headless &&
+        pip install --no-cache-dir -r requirements.txt &&
+        tail -f /dev/null
+      "
+    networks:
+      - docker-net
+    depends_on:
+      - spark-master
+      - minio
+    stdin_open: true
+    tty: true
       
 networks:
   docker-net:

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "transaction-analyzer": {
+      "command": "docker",
+      "args": ["exec", "-i", "mcp-transaction-analyzer", "python", "/app/server.py"],
+      "cwd": "/Users/<username>/projects/personal_finance_data_pipeline_kafka_spark_minio"
+    }
+  },
+  "preferences": {
+    "coworkScheduledTasksEnabled": false,
+    "ccdScheduledTasksEnabled": false,
+    "coworkWebSearchEnabled": true,
+    "sidebarMode": "chat"
+  }
+}

@@ -4,48 +4,53 @@ Personal Finance AI Data Pipeline - Stream (Kafka) and store (MinIO) transaction
 
 - [Personal Finance AI Data Pipeline](#personal-finance-ai-data-pipeline)
   * [Overview](#overview)
-  * [Skills Demonstrated](#skills-demonstrated)
-  * [Key Features](#key-features)
-  * [Use Cases](#use-cases)
-  * [Architecture & Design Decisions](#architecture--design-decisions)
-  * [Technologies & Concepts](#technologies--concepts)
+  * [MCP Server Integration](#mcp-server-integration)
   * [Tech Stack & Tools](#tech-stack--tools)
-  * [Project Setup & Usage Guide](#project-setup---usage-guide)
+  * [Project Setup & Usage Guide](#project-setup--usage-guide)
     + [1. Clone the Repository](#1-clone-the-repository)
-    + [2. Download the LLM of choice CodeLlama-7B-Instruct.Q4_K_M](#2-download-the-llm-of-choice-codellama-7b-instruct-q4-km)
+    + [2. Leverage a Local LLM or OpenAI API](#2-leverage-a-local-llm-or-openai-api)
     + [3. Install Java - JDK 22](#3-install-java---jdk-22)
     + [4. Install Apache Spark 3.5.1](#4-install-apache-spark-351)
     + [5. Install Required JARs for MinIO Integration](#5-install-required-jars-for-minio-integration)
     + [6. Start Docker Containers](#6-start-docker-containers)
     + [7. Create MinIO Bucket](#7-create-minio-bucket)
     + [8. Create Kafka Topic](#8-create-kafka-topic)
-    + [9. Kafka CLI Producer/Consumer](#9-kafka-cli-producer-consumer)
+    + [9. Kafka CLI Producer/Consumer](#9-kafka-cli-producerconsumer)
     + [10. Register Kafka Connect Sink](#10-register-kafka-connect-sink)
     + [11. Produce Data to Kafka from CSV](#11-produce-data-to-kafka-from-csv)
-    + [12. 🔍 Analyze Data with PySpark](#12----analyze-data-with-pyspark)
+    + [12. 🔍 Analyze Data with PySpark](#12--analyze-data-with-pyspark)
+    + [13. Leverage the Frontend UI](#13-leverage-the-frontend-ui-to-ask-questions-about-the-data-in-natural-language)
+    + [14. 🚀 MCP Server for AI-Powered Transaction Analysis](#14--mcp-server-for-ai-powered-transaction-analysis)
   * [Example Workflow](#example-workflow)
     + [Docker Containers](#docker-containers)
     + [Streaming Log Example](#streaming-log-example)
     + [MinIO objects after streaming](#minio-objects-after-streaming)
     + [Using PySpark to parse MinIO objects and perform a simple filtering](#using-pyspark-to-parse-minio-objects-and-perform-a-simple-filtering)
     + [Spark Master UI](#spark-master-ui)
-    + [Frontend UI](#frontend-ui)
-    + [Querying transactions in English language by leveraging local LLM](#querying-transactions-in-english-language-by-leveraging-local-llm)
-
+    + [Frontend UI, asking questions in natural language](#frontend-ui-asking-questions-in-natural-language)
+    + [Querying transactions in English language using the LLM backend (local or OpenAI)](#querying-transactions-in-english-language-using-the-llm-backend-local-or-openai)
+    + [Leveraging Claude Desktop for MCP driven analytics](#leveraging-claude-desktop-for-mcp-driven-analytics)
+    
 ## Overview
 
 This project is a personal finance AI data pipeline built to experiment with real-time data processing, storage, and AI-assisted analytics using modern open-source tools. It simulates a financial data workflow with both manual and AI-powered analysis capabilities.
 
-🧩 Key Components
+🧩 Key Components:
 
-📥 Data Ingestion: Financial transactions (in CSV format) are streamed into Kafka.
-🗂️ Data Storage: The streamed data is transformed into JSON and stored in MinIO (an S3-compatible object store).
+📥 Data Ingestion: Financial transactions (in CSV format) are streamed with Kafka.
+
+🗂️ Data Storage: The streamed data is serialized into JSON and stored in MinIO (an S3-compatible object store).
+
 📊 Data Analysis:
 - **Manual Analysis:** Write PySpark scripts to analyze the stored data using Apache Spark 3.
 - **AI-Powered Analysis:** Interact with a large language model via the FastAPI backend. By default the service uses a local LLM (Llama.cpp), but you can switch to OpenAI by setting `USE_OPENAI=true` and providing an `OPENAI_API_KEY`.
   - The model will convert the prompt into a valid PySpark query.
   - The backend will execute the query against the Spark cluster.
   - Return and display the results in the Web UI.
+  
+- **MCP Server Integration:** Use AI assistants like Claude Desktop to directly query and analyze your transaction data through the Model Context Protocol. This enables conversational AI-driven analytics, allowing users to ask questions in natural language and receive insights powered by Spark and MinIO.
+
+
 
 ## Tech Stack & Tools
 
@@ -80,91 +85,14 @@ A backend container running a local large language model via Llama.cpp. It:
 - Executes the code on the Spark cluster, and
 - Returns the results to the user.
 
-## Skills Demonstrated
+🤖 MCP Transaction Analyzer
+An MCP (Model Context Protocol) server that enables AI assistants to directly interact with your financial data:
 
-This project showcases expertise across multiple domains:
+- Provides tools for spending analysis, categorization, and anomaly detection
+- Exposes transaction data schema and statistics as resources
+- Integrates with Claude Desktop and other MCP-compatible AI assistants
+- Enables natural language queries against your data lake backed by Spark and MinIO
 
-- **Real-Time Data Streaming:** Kafka for high-throughput message processing and fault-tolerant data pipelines
-- **Distributed Computing:** Apache Spark for large-scale data processing and parallel analytics
-- **Object Storage Integration:** MinIO (S3-compatible) connectivity and advanced JAR integration with Spark
-- **AI/ML Integration:** Local LLM inference (Llama.cpp) and cloud provider integration (OpenAI API)
-- **Full-Stack Development:** FastAPI backend, React/HTML frontend, and REST API design
-- **DevOps & Containerization:** Docker Compose orchestration, multi-container networking, and service coordination
-- **Data Engineering:** ETL pipeline design, data transformation, JSON serialization, and distributed data analysis
-- **Python Development:** PySpark scripting, producer/consumer patterns, and data processing workflows
-
-## Key Features
-
-✅ **Real-Time Transaction Streaming** — Kafka ingests financial data from CSV sources with sub-second latency
-✅ **Natural Language Query Interface** — Request analyses in plain English; the LLM converts prompts to PySpark code automatically
-✅ **Flexible LLM Backend** — Toggle between local Llama.cpp inference and cloud providers (OpenAI) without code changes
-✅ **Seamless S3 Compatibility** — Use MinIO locally or swap with AWS S3 for cloud deployment
-✅ **Distributed Analysis** — Spark cluster processes data across multiple workers for scalable analytics
-✅ **Production-Ready Monitoring** — Spark UI, Kafka metrics, and structured logging across all components
-✅ **Extensible Architecture** — Modular design allows adding Flink, Kafka Streams, or other streaming frameworks
-
-## Use Cases
-
-**Development & Learning:**
-- Build and test local financial analytics solutions
-- Learn real-time streaming, distributed computing, and AI integration patterns
-- Experiment with LLM-powered query interfaces before production deployment
-
-**Production Prototypes:**
-- Prototype AI-driven query interfaces for enterprise or personal data lakes
-- Rapid testing of financial analytics features with minimal infrastructure cost
-- Demonstrate AI capabilities to stakeholders with a fully functional PoC
-
-## Architecture & Design Decisions
-
-**Why Kafka over alternatives?**
-Kafka provides high-throughput, fault-tolerant message streaming with built-in partitioning and replication. Unlike direct Spark Streaming, Kafka decouples producers from consumers, enabling independent scaling and failure recovery.
-
-**Why Spark for analytics?**
-Apache Spark's distributed processing enables analysis of datasets larger than single-machine memory. Its Python API (PySpark) maintains code familiarity while providing enterprise-grade performance.
-
-**Local LLM vs Cloud API?**
-The project supports both: CodeLlama-7B runs locally (no API costs, data privacy), while OpenAI provides advanced reasoning for complex queries. The architecture allows switching at runtime based on cost/quality trade-offs.
-
-**MinIO for object storage?**
-MinIO is S3-compatible, enabling code portability. Deploy locally for development, swap to AWS S3 for production with zero application changes. Kafka Connect handles the streaming-to-storage bridge automatically.
-
-**Docker Compose for orchestration?**
-Ensures reproducibility across machines. The multi-container setup (Kafka, Zookeeper, MinIO, Spark, LLM backend, frontend) is defined in code, enabling CI/CD integration and easy environment replication.
-
-## Technologies & Concepts
-
-**Message Streaming & Pub-Sub Patterns**
-- Kafka brokers, topics, partitions, and consumer groups
-- Producer/consumer architectures and offset management
-- Error handling and retry logic in streaming workflows
-
-**Distributed Data Processing**
-- Spark RDDs, DataFrames, and lazy evaluation
-- Partitioning strategies and shuffle operations
-- Cost optimization through task parallelism
-
-**Data Formats & Serialization**
-- CSV parsing and validation
-- JSON serialization for cloud storage
-- Schema evolution and data type handling
-
-**LLM & AI Integration**
-- Prompt engineering and context management
-- Code generation from natural language
-- Error handling for AI-generated code execution
-- API integration (local inference vs cloud services)
-
-**Cloud-Native Architecture**
-- Containerization and image optimization
-- Service discovery and networking
-- Environment configuration management (`.env` files, secrets)
-- Reproducible infrastructure as code
-
-**Monitoring & Observability**
-- Structured logging with Python logging module (INFO, ERROR levels)
-- Web UI dashboards (Spark Master, MinIO console, FastAPI Swagger)
-- Health checks and error propagation across services
 
 ## Project Setup & Usage Guide
 
@@ -180,15 +108,14 @@ cd personal_finance_ai_data_pipeline
 
 ---
 
-### 2. Download the LLM of choice CodeLlama 7B Instruct Q4 KM (if using local model)
+### 2. Leverage a local LLM or OpenAI API for 
+#### Local LLM of choice CodeLlama 7B Instruct Q4 KM 
 ```bash
 wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_K_M.gguf -O codellama-7b-instruct.Q4_K_M.gguf
 mkdir -p llm_spark/backend/llm
 cp codellama-7b-instruct.Q4_K_M.gguf llm_spark/backend/llm/
 ```
-
-> 💡 **Optional OpenAI Backend**
-> 
+#### OpenAI API
 > - If you'd rather have prompts handled by OpenAI instead of the local Llama model, set `USE_OPENAI=true` and make sure `OPENAI_API_KEY` is available in the environment when the container starts. **Do not** hardcode the key in `docker-compose.yml`; use your shell or an `.env` file instead (e.g. `export OPENAI_API_KEY="sk-..."`).
 >   - This code assumes `openai` Python package version **1.0.0 or later**; earlier releases used `openai.ChatCompletion` directly and are no longer supported.
 > - The `OPENAI_MODEL` variable can also be used to select a specific OpenAI model (default `gpt-4`).
@@ -331,6 +258,40 @@ python minio_transactions_parse_and_analyze.py \
 📄 Output log: `./scripts/stream_csv_to_kafka_example_output.log`
 
 ---
+
+### 13. Leverage the Frontend UI to ask questions about the data in natural language.
+
+```
+Load localhost:8082 and ask questions about your data in natural language.
+```
+
+### 14. 🚀 MCP Server for AI-Powered Transaction Analysis
+#### Setup MCP with Claude Desktop
+
+1. **Install Claude Desktop** (if not already installed)
+
+2. **Configure MCP Server**: Add this to your Claude Desktop config file:
+
+   **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   
+   ```json
+   {
+     "mcpServers": {
+       "transaction-analyzer": {
+         "command": "docker",
+         "args": ["exec", "mcp-transaction-analyzer", "python", "/app/server.py"],
+         "cwd": "/path/to/your/project"
+       }
+     }
+   }
+   ```
+
+3. **Restart Claude Desktop**
+
+4. **Test the Integration**: Ask Claude questions about your transaction data!
+
+---
+
 ## Example Workflow
 
 ### Docker Containers
@@ -498,8 +459,24 @@ only showing top 20 rows
 ### Spark Master UI
 ![Spark Master UI](https://github.com/tomonikolovski/personal_finance_data_pipeline_kafka_spark_minio/assets/10199962/dd227b3d-5d68-4948-9726-baa21dff2d7d)
 
-### Frontend UI
+### Frontend UI, asking questions in natural language 
 <img width="1391" alt="image" src="https://github.com/user-attachments/assets/f8b714ab-7f53-4a9d-a0a8-3d72a8b750e9" />
 
 ### Querying transactions in English language using the LLM backend (local or OpenAI)
 ![Untitled](https://github.com/user-attachments/assets/adf2fb33-0958-4c9a-b879-a47724341449)
+
+### Leveraging Claude Desktop for MCP driven analytics
+
+How much money have I spent over each month?
+<img width="910" height="918" alt="Claude MCP 1" src="https://github.com/user-attachments/assets/dc52e88f-f26e-400e-81ee-5ea2ee684ab7" />
+
+Spark kicking off in the background
+<img width="1105" height="918" alt="Claude MCP 3" src="https://github.com/user-attachments/assets/b019dfe9-2554-447f-af2c-07923c4de869" />
+
+Deep dive 1
+<img width="1105" height="918" alt="Claude MCP 4" src="https://github.com/user-attachments/assets/f9377750-ba21-4494-9f09-8e1d763c9af4" />
+
+Check unusual transactions.
+<img width="1105" height="918" alt="Claude MCP 5" src="https://github.com/user-attachments/assets/ecf93025-3eb2-4b39-9819-44ceff25cda0" />
+
+

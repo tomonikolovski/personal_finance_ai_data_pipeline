@@ -1,0 +1,9 @@
+mcp>=1.6.0
+fastapi
+uvicorn
+boto3
+pyspark==3.5.1
+pandas
+pydantic
+python-multipart
+requests
