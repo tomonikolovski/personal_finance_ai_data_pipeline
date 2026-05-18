@@ -2,6 +2,9 @@
 
 Personal Finance AI Data Pipeline - Stream (Kafka) and store (MinIO) transactions. Analyze with Spark 3 and leverage a local LLM to write code based on human language input
 
+<img width="1408" height="768" alt="Gemini_Generated_Image_xcw6hkxcw6hkxcw6" src="https://github.com/user-attachments/assets/df59b224-8cd7-4a54-b6ff-aa1ccfde28d9" />
+
+
 - [Personal Finance AI Data Pipeline](#personal-finance-ai-data-pipeline)
   * [Overview](#overview)
   * [MCP Server Integration](#mcp-server-integration)
